@@ -10,10 +10,10 @@ Requirements
 * SDL2_image
 
 
-Build instructions:
+Build instructions
+------------------
 
     mkdir build
     cd build
     cmake ..
     make
-
