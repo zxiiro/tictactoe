@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# Doxygen
+html/
+
 # OS and build artifacts
 *~
 build/

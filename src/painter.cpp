@@ -21,6 +21,14 @@
 
 #include "painter.h"
 
+/**
+ * Loads an image into memory
+ *
+ * @param renderer  renderer to use
+ * @param file      filename of image to load
+ *
+ * @return          returns the loaded image
+ */
 SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, char* file)
 {
     SDL_Surface* tmp_image = NULL;
@@ -42,6 +50,17 @@ SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, char* file)
     return image;
 }
 
+/**
+ * Draws an image to the renderer
+ *
+ * @param renderer  renderer to draw on
+ * @param image     image to draw
+ * @param x         x coordinate to draw at
+ * @param y         y coordinate to draw at
+ * @param clip      clip to draw if available, passing NULL disables clip
+ *
+ * @return          true if success, otherwise false on failure
+ */
 bool Painter::DrawImage(SDL_Renderer* renderer, SDL_Texture* image, int x, int y, SDL_Rect* clip)
 {
     SDL_Rect pos;
