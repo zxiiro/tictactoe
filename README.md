@@ -1,12 +1,19 @@
 tictactoe
 =========
 
-SDL2 Tic Tac Toe game.
+SDL2 based Tic Tac Toe game example.
+
+Requirements
+------------
+* Boost
+* SDL2
+* SDL2_image
+
 
 Build instructions:
 
-  mkdir build
-  cd build
-  cmake ..
-  make
+    mkdir build
+    cd build
+    cmake ..
+    make
 
