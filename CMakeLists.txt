@@ -58,8 +58,8 @@ else ()
         )
 endif ()
 
-target_link_libraries(${App_Name} 
-) 
+target_link_libraries(${App_Name}
+)
 
 
 
@@ -98,3 +98,6 @@ target_link_libraries(${App_Name}
     ${SDL2IMAGE_LIBRARY}
     ${TARGET_LINK_LIBRARIES}
     )
+
+## Copy graphics to output
+file(COPY "${CMAKE_SOURCE_DIR}/gfx" DESTINATION "${CMAKE_BINARY_DIR}")

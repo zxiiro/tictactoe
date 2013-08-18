@@ -75,7 +75,7 @@ int Engine::Execute()
     if (Initialize() == false) {
         return -1;
     }
-    
+
     SDL_Event event;
 
     // Game loop
@@ -115,5 +115,39 @@ void Engine::OnLoop()
 
 void Engine::OnRender()
 {
+    SDL_RenderClear(renderer);
 
+    // Test drawing the game board
+    // TODO: Rewrite with proper functions when available
+    SDL_Texture* tiles;
+    tiles = Painter::LoadImage(renderer, "gfx/tiles.png");
+
+    // tile type 1
+    SDL_Rect tile1;
+    tile1.x = 0;
+    tile1.y = 0;
+    tile1.w = 32;
+    tile1.h = 32;
+
+    // tile type 2
+    SDL_Rect tile2;
+    tile2.x = 32;
+    tile2.y = 0;
+    tile2.w = 32;
+    tile2.h = 32;
+
+    Painter::DrawImage(renderer, tiles, 0, 0, &tile1);
+    Painter::DrawImage(renderer, tiles, 32, 0, &tile2);
+    Painter::DrawImage(renderer, tiles, 64, 0, &tile1);
+
+    Painter::DrawImage(renderer, tiles, 0, 32, &tile2);
+    Painter::DrawImage(renderer, tiles, 32, 32, &tile1);
+    Painter::DrawImage(renderer, tiles, 64, 32, &tile2);
+
+    Painter::DrawImage(renderer, tiles, 0, 64, &tile1);
+    Painter::DrawImage(renderer, tiles, 32, 64, &tile2);
+    Painter::DrawImage(renderer, tiles, 64, 64, &tile1);
+    // --- End Test code
+
+    SDL_RenderPresent(renderer);
 }

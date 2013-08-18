@@ -19,34 +19,19 @@
 
 **********************************************************************/
 
-#ifndef _CENGINE_H_
-#define _CENGINE_H_
+#ifndef _CPAINTER_H_
+#define _CPAINTER_H_
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
-#include "global.h"
-#include "painter.h"
-
-class Engine
-{
-private:
-    bool running;
-
-    SDL_Renderer*   renderer;
-    SDL_Window*     window;
-
+class Painter {
 public:
-    Engine();
+    Painter();
 
-    bool Initialize();
-    void Cleanup();
-
-    int Execute();
-
-    // Events
-    void OnEvent(SDL_Event* event);
-    void OnLoop();
-    void OnRender();
+    // Tools for painting to the renderer
+    static SDL_Texture* LoadImage(SDL_Renderer* renderer, char* file);
+    static bool DrawImage(SDL_Renderer* renderer, SDL_Texture* image, int x, int y, SDL_Rect* clip);
 };
 
 #endif
