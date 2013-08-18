@@ -19,35 +19,11 @@
 
 **********************************************************************/
 
-#include <boost/program_options.hpp>
-#include <SDL2/SDL.h>
+#ifndef _GLOBAL_H_
+#define _GLOBAL_H_
 
-#include "engine.h"
+// Window settings
+#define WWIDTH		640
+#define	WHEIGHT		480
 
-namespace po = boost::program_options;
-
-int main(int argc, char** argv)
-{
-    /********************************
-        Parse commandline options
-     ********************************/
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("debug", "enable debug logs")
-        ;
-
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
-
-    // Enable Debug Logs
-    if (vm.count("debug")) {
-        SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
-    }
-
-    /****************************
-        Start the game Engine
-     ****************************/
-    Engine game;
-    return game.Execute();
-}
+#endif

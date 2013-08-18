@@ -77,15 +77,24 @@ if (NOT SDL2IMAGE_FOUND)
     message (FATAL_ERROR "SDL_image not found!")
 endif (NOT SDL2IMAGE_FOUND)
 
+###
+### Find Boost
+###
+find_package( Boost COMPONENTS program_options REQUIRED )
+if (NOT Boost_FOUND)
+    message (FATAL_ERROR "Boost not found!")
+endif (NOT Boost_FOUND)
+
 include_directories(
+    ${Boost_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR}
     ${INCLUDE_DIRECTORIES}
     )
 
 target_link_libraries(${App_Name}
+    ${Boost_LIBRARIES}
     ${SDL2_LIBRARY}
     ${SDL2MAIN_LIBRARY}
     ${SDL2IMAGE_LIBRARY}
     ${TARGET_LINK_LIBRARIES}
     )
-

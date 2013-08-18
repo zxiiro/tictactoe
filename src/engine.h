@@ -19,35 +19,33 @@
 
 **********************************************************************/
 
-#include <boost/program_options.hpp>
+#ifndef _CENGINE_H_
+#define _CENGINE_H_
+
 #include <SDL2/SDL.h>
 
-#include "engine.h"
+#include "global.h"
 
-namespace po = boost::program_options;
-
-int main(int argc, char** argv)
+class Engine
 {
-    /********************************
-        Parse commandline options
-     ********************************/
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("debug", "enable debug logs")
-        ;
+private:
+    bool running;
 
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+    SDL_Renderer*   renderer;
+    SDL_Window*     window;
 
-    // Enable Debug Logs
-    if (vm.count("debug")) {
-        SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
-    }
+public:
+    Engine();
 
-    /****************************
-        Start the game Engine
-     ****************************/
-    Engine game;
-    return game.Execute();
-}
+    bool Initialize();
+    void Cleanup();
+
+    int Execute();
+
+    // Events
+    void OnEvent(SDL_Event* event);
+    void OnLoop();
+    void OnRender();
+};
+
+#endif
