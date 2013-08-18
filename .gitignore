@@ -11,3 +11,7 @@
 *.lai
 *.la
 *.a
+
+# OS and build artifacts
+*~
+build/
