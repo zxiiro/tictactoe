@@ -29,7 +29,7 @@
  *
  * @return          returns the loaded image
  */
-SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, char* file)
+SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, const char* file)
 {
     SDL_Surface* tmp_image = NULL;
     SDL_Texture* image = NULL;

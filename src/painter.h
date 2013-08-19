@@ -30,7 +30,7 @@ public:
     Painter();
 
     // Tools for painting to the renderer
-    static SDL_Texture* LoadImage(SDL_Renderer* renderer, char* file);
+    static SDL_Texture* LoadImage(SDL_Renderer* renderer, const char* file);
     static bool DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip);
 };
 

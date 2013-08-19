@@ -37,7 +37,7 @@ public:
 
 private:
     SDL_Rect* tile_clips;
-    const int TILE_SIZE = 32;
+    static const int TILE_SIZE = 32;
     std::vector<Tile> tile_list;
 
 public:
