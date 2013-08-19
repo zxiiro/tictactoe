@@ -24,6 +24,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "board.h"
 #include "global.h"
 #include "painter.h"
 

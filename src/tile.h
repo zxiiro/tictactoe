@@ -19,19 +19,15 @@
 
 **********************************************************************/
 
-#ifndef _CPAINTER_H_
-#define _CPAINTER_H_
+#ifndef _CTILE_H_
+#define _CTILE_H_
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-class Painter {
+class Tile
+{
 public:
-    Painter();
+    int     tile_id;
 
-    // Tools for painting to the renderer
-    static SDL_Texture* LoadImage(SDL_Renderer* renderer, char* file);
-    static bool DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip);
+    Tile();
 };
 
 #endif

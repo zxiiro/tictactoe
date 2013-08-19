@@ -35,13 +35,18 @@ bool Engine::Initialize()
     // Initialize SDL or fail if initialization issue
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initializing SDL...");
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to initialize SDL: %s", SDL_GetError());
         return false;
     }
 
-    // Initialize Displayer and Renderer
+
+    /****************************************
+        Initialize Displayer and Renderer
+     ****************************************/
+
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initializing window...");
     window = SDL_CreateWindow("SDL2 Tic Tac Toe",
@@ -55,6 +60,25 @@ bool Engine::Initialize()
                     SDL_RENDERER_TARGETTEXTURE |
                     SDL_RENDERER_PRESENTVSYNC |
                     SDL_RENDERER_ACCELERATED);
+
+
+    /*****************
+        Load Board
+     *****************/
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        "Initializing board...");
+    if (Board::GameBoard.Initialize() == false)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "Failed to initialize game board.");
+    }
+    Board::GameBoard.tileset = Painter::LoadImage(renderer, "gfx/tiles.png");
+
+
+    /****************
+        Finish up
+     ****************/
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
         "Game initialized.");
@@ -117,37 +141,7 @@ void Engine::OnRender()
 {
     SDL_RenderClear(renderer);
 
-    // Test drawing the game board
-    // TODO: Rewrite with proper functions when available
-    SDL_Texture* tiles;
-    tiles = Painter::LoadImage(renderer, "gfx/tiles.png");
-
-    // tile type 1
-    SDL_Rect tile1;
-    tile1.x = 0;
-    tile1.y = 0;
-    tile1.w = 32;
-    tile1.h = 32;
-
-    // tile type 2
-    SDL_Rect tile2;
-    tile2.x = 32;
-    tile2.y = 0;
-    tile2.w = 32;
-    tile2.h = 32;
-
-    Painter::DrawImage(renderer, tiles, 0, 0, &tile1);
-    Painter::DrawImage(renderer, tiles, 32, 0, &tile2);
-    Painter::DrawImage(renderer, tiles, 64, 0, &tile1);
-
-    Painter::DrawImage(renderer, tiles, 0, 32, &tile2);
-    Painter::DrawImage(renderer, tiles, 32, 32, &tile1);
-    Painter::DrawImage(renderer, tiles, 64, 32, &tile2);
-
-    Painter::DrawImage(renderer, tiles, 0, 64, &tile1);
-    Painter::DrawImage(renderer, tiles, 32, 64, &tile2);
-    Painter::DrawImage(renderer, tiles, 64, 64, &tile1);
-    // --- End Test code
+    Board::GameBoard.OnRender(renderer);
 
     SDL_RenderPresent(renderer);
 }

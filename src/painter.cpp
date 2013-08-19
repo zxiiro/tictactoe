@@ -55,28 +55,18 @@ SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, char* file)
  *
  * @param renderer  renderer to draw on
  * @param image     image to draw
- * @param x         x coordinate to draw at
- * @param y         y coordinate to draw at
+ * @param position  position and size to draw image at (SDL_Rect)
  * @param clip      clip to draw if available, passing NULL disables clip
  *
  * @return          true if success, otherwise false on failure
  */
-bool Painter::DrawImage(SDL_Renderer* renderer, SDL_Texture* image, int x, int y, SDL_Rect* clip)
+bool Painter::DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip)
 {
-    SDL_Rect pos;
-    pos.x = x;
-    pos.y = y;
-
-    // If a clip is provided us it for the image width
-    if (clip != NULL){
-        pos.w = clip->w;
-        pos.h = clip->h;
-    }
-    else {
-        SDL_QueryTexture(image, NULL, NULL, &pos.w, &pos.h);
+    if (clip == NULL) {
+        SDL_QueryTexture(image, NULL, NULL, &position->w, &position->h);
     }
 
-    SDL_RenderCopy(renderer, image, clip, &pos);
+    SDL_RenderCopy(renderer, image, clip, position);
 
     return true;
 }

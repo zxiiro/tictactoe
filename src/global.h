@@ -24,6 +24,9 @@
 
 // Window settings
 #define WWIDTH		640
-#define	WHEIGHT		480
+#define	WHEIGHT		384
+
+// Zoom Level: how much to stretch the sprites
+#define ZOOM_LEVEL  4
 
 #endif

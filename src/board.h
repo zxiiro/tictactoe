@@ -19,19 +19,35 @@
 
 **********************************************************************/
 
-#ifndef _CPAINTER_H_
-#define _CPAINTER_H_
+#ifndef _CBOARD_H_
+#define _CBOARD_H_
+
+#include <vector>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
-class Painter {
+#include "global.h"
+#include "painter.h"
+#include "tile.h"
+
+class Board
+{
 public:
-    Painter();
+    static Board    GameBoard;
 
-    // Tools for painting to the renderer
-    static SDL_Texture* LoadImage(SDL_Renderer* renderer, char* file);
-    static bool DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip);
+private:
+    SDL_Rect* tile_clips;
+    const int TILE_SIZE = 32;
+    std::vector<Tile> tile_list;
+
+public:
+    SDL_Texture*    tileset;
+
+    Board();
+
+    bool Initialize();
+
+    void OnRender(SDL_Renderer* renderer);
 };
 
 #endif

@@ -19,19 +19,9 @@
 
 **********************************************************************/
 
-#ifndef _CPAINTER_H_
-#define _CPAINTER_H_
+#include "tile.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-class Painter {
-public:
-    Painter();
-
-    // Tools for painting to the renderer
-    static SDL_Texture* LoadImage(SDL_Renderer* renderer, char* file);
-    static bool DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip);
-};
-
-#endif
+Tile::Tile()
+{
+    tile_id = 0;
+}
