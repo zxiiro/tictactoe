@@ -74,7 +74,7 @@ bool Engine::Initialize()
             "Failed to initialize game board.");
     }
     Board::GameBoard.tileset = Painter::LoadImage(renderer, "gfx/tiles.png");
-
+    Board::GameBoard.unitset = Painter::LoadImage(renderer, "gfx/units.png");
 
     /****************
         Finish up
@@ -130,6 +130,12 @@ void Engine::OnEvent(SDL_Event* event)
             "Exiting Tic Tac Toe");
         running = false;
     }
+    // User is left clicking
+    else if (event->type == SDL_MOUSEBUTTONDOWN) {
+        if (event->button.button == SDL_BUTTON_LEFT) {
+            OnMouseLeftButtonDown(event->button.x, event->button.y);
+        }
+    }
 }
 
 void Engine::OnLoop()
@@ -144,4 +150,18 @@ void Engine::OnRender()
     Board::GameBoard.OnRender(renderer);
 
     SDL_RenderPresent(renderer);
+}
+
+/*****************************
+         Mouse Events
+ ****************************/
+void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
+    // Divide mouse coordinates by the tile's size to find out where the unit should be put
+    int id = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
+    id = id + ((mouse_y / (TILE_SIZE * ZOOM_LEVEL)) * 3);
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "User is left clicking at cell: %i\n", id);
+
+    Board::GameBoard.SetCell(id);
 }

@@ -19,37 +19,21 @@
 
 **********************************************************************/
 
-#ifndef _CENGINE_H_
-#define _CENGINE_H_
+#ifndef _CUNIT_H_
+#define _CUNIT_H_
 
-#include <SDL2/SDL.h>
-
-#include "board.h"
-#include "global.h"
-#include "painter.h"
-
-class Engine
+class Unit
 {
-private:
-    bool running;
-
-    SDL_Renderer*   renderer;
-    SDL_Window*     window;
-
 public:
-    Engine();
+    Unit();
 
-    bool Initialize();
-    void Cleanup();
+    int unit_id;
 
-    int Execute();
-
-    // Events
-    void OnEvent(SDL_Event* event);
-    void OnLoop();
-    void OnRender();
-
-    void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
+    enum Type {
+        UNIT_TYPE_X = 0,
+        UNIT_TYPE_O = 1,
+        UNIT_TYPE_NONE = 2
+    };
 };
 
 #endif

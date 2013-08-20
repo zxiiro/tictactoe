@@ -29,4 +29,7 @@
 // Zoom Level: how much to stretch the sprites
 #define ZOOM_LEVEL  4
 
+// Tile Size: size of every tile
+#define TILE_SIZE   32
+
 #endif
