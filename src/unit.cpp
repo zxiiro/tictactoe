@@ -55,6 +55,11 @@ bool Unit::Initialize() {
         unit_list.push_back(tmp_unit);
     }
 
+    /**************************************
+       Initialize unit transparecy vector
+     **************************************/
+    ResetTransparentUnitList();
+
     return true;
 }
 
@@ -67,16 +72,27 @@ void Unit::OnRender(SDL_Renderer* renderer) {
 
     // Draw units (X and O)
     for (int i = 0; i < 9; i++) {
+        int x = (i % 3);
+        int y = (i / 3);
+
+        SDL_Rect unit_pos;
+        unit_pos.x = x * TILE_SIZE * ZOOM_LEVEL;
+        unit_pos.y = y * TILE_SIZE * ZOOM_LEVEL;
+        unit_pos.w = TILE_SIZE * ZOOM_LEVEL;
+        unit_pos.h = TILE_SIZE * ZOOM_LEVEL;
+
+        // Check if there's any units in the transparency list that need to be drawn
+        if (unit_list_transparent[i].unit_id != Unit::UNIT_TYPE_NONE) {
+            // Alpha can be set between 0 to 255
+            SDL_SetTextureAlphaMod(unitset, 100);
+
+            int unit_clip_id = unit_list_transparent[i].unit_id;
+            Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
+        }
+
         // Check if the units in the list need to actually be drawn
         if (unit_list[i].unit_id != Unit::UNIT_TYPE_NONE) {
-            int x = (i % 3);
-            int y = (i / 3);
-
-            SDL_Rect unit_pos;
-            unit_pos.x = x * TILE_SIZE * ZOOM_LEVEL;
-            unit_pos.y = y * TILE_SIZE * ZOOM_LEVEL;
-            unit_pos.w = TILE_SIZE * ZOOM_LEVEL;
-            unit_pos.h = TILE_SIZE * ZOOM_LEVEL;
+            SDL_SetTextureAlphaMod(unitset, 255);
 
             int unit_clip_id = unit_list[i].unit_id;
             Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
@@ -97,5 +113,26 @@ void Unit::SetCell(int id)
             unit_list[id].unit_id = Unit::UNIT_TYPE_O;
             currentPlayer = 0;
         }
+    }
+} 
+
+void Unit::SetTransparentCell(int id)
+{
+    if (id < 0 || id >= 9) return;
+
+    ResetTransparentUnitList();
+    if (currentPlayer == 0) {
+        unit_list_transparent[id].unit_id = Unit::UNIT_TYPE_X;
+    } else if (currentPlayer == 1) {
+        unit_list_transparent[id].unit_id = Unit::UNIT_TYPE_O;
+    }
+}
+
+void Unit::ResetTransparentUnitList()
+{
+    unit_list_transparent.clear();
+    for (int i = 0; i < 9; i++) {
+        Unit tmp_unit;
+        unit_list_transparent.push_back(tmp_unit);
     }
 }

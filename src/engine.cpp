@@ -160,6 +160,10 @@ void Engine::OnEvent(SDL_Event* event)
             OnMouseLeftButtonDown(event->button.x, event->button.y);
         }
     }
+    // User's mouse is moving
+    else if (event->type == SDL_MOUSEMOTION) {
+        OnMouseMove(event->motion.x, event->motion.y);
+    }
 }
 
 void Engine::OnLoop()
@@ -192,5 +196,16 @@ void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
                 "User is left clicking at cell: %i", id);
 
         Unit::GameUnits.SetCell(id);
+    }
+}
+
+void Engine::OnMouseMove(int mouse_x, int mouse_y) {
+    // Check if mouse x and y are actually in the board
+    if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
+        // Divide mouse coordinates by the tile's size to find out where the unit should be put
+        int id = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
+        id = id + ((mouse_y / (TILE_SIZE * ZOOM_LEVEL)) * 3);
+
+        Unit::GameUnits.SetTransparentCell(id);
     }
 }

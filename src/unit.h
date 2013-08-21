@@ -40,6 +40,7 @@ public:
     bool Initialize();
     void OnRender(SDL_Renderer* renderer);
     void SetCell(int id);
+    void SetTransparentCell(int id);
 
 private:
     int currentPlayer;
@@ -48,12 +49,15 @@ private:
 
     SDL_Rect* unit_clips;
     std::vector<Unit> unit_list;
+    std::vector<Unit> unit_list_transparent;
 
     enum Type {
         UNIT_TYPE_X = 0,
         UNIT_TYPE_O = 1,
         UNIT_TYPE_NONE = 2
     };
+
+    void ResetTransparentUnitList();
 };
 
 #endif

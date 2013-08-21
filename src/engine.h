@@ -47,6 +47,7 @@ private:
     void OnRender();
 
     void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
+    void OnMouseMove(int mouse_x, int mouse_y);
 
 public:
     Engine();
