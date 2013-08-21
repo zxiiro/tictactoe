@@ -29,7 +29,6 @@
 #include "global.h"
 #include "painter.h"
 #include "tile.h"
-#include "unit.h"
 
 class Board
 {
@@ -40,21 +39,14 @@ private:
     SDL_Rect* tile_clips;
     std::vector<Tile> tile_list;
 
-    SDL_Rect* unit_clips;
-    std::vector<Unit> unit_list;
-
-    int currentPlayer;
-
 public:
     SDL_Texture*    tileset;
-    SDL_Texture*    unitset;
 
     Board();
 
     bool Initialize();
 
     void OnRender(SDL_Renderer* renderer);
-    void SetCell(int id);
 };
 
 #endif

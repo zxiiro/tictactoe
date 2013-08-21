@@ -27,6 +27,7 @@
 #include "board.h"
 #include "global.h"
 #include "painter.h"
+#include "unit.h"
 
 class Engine
 {
@@ -36,13 +37,8 @@ private:
     SDL_Renderer*   renderer;
     SDL_Window*     window;
 
-public:
-    Engine();
-
     bool Initialize();
     void Cleanup();
-
-    int Execute();
 
     // Events
     void OnEvent(SDL_Event* event);
@@ -50,6 +46,11 @@ public:
     void OnRender();
 
     void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
+
+public:
+    Engine();
+
+    int Execute();
 };
 
 #endif

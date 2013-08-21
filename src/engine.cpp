@@ -74,7 +74,16 @@ bool Engine::Initialize()
             "Failed to initialize game board.");
     }
     Board::GameBoard.tileset = Painter::LoadImage(renderer, "gfx/tiles.png");
-    Board::GameBoard.unitset = Painter::LoadImage(renderer, "gfx/units.png");
+
+    /*****************
+        Load Units
+     *****************/
+    if (Unit::GameUnits.Initialize() == false) 
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "Failed to initialize game units.");
+    }
+    Unit::GameUnits.unitset = Painter::LoadImage(renderer, "gfx/units.png");
 
     /****************
         Finish up
@@ -148,6 +157,7 @@ void Engine::OnRender()
     SDL_RenderClear(renderer);
 
     Board::GameBoard.OnRender(renderer);
+    Unit::GameUnits.OnRender(renderer);
 
     SDL_RenderPresent(renderer);
 }
@@ -163,5 +173,5 @@ void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
             "User is left clicking at cell: %i\n", id);
 
-    Board::GameBoard.SetCell(id);
+    Unit::GameUnits.SetCell(id);
 }

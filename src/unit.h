@@ -22,18 +22,38 @@
 #ifndef _CUNIT_H_
 #define _CUNIT_H_
 
+#include <vector>
+
+#include <SDL2/SDL.h>
+
+#include "global.h"
+#include "painter.h"
+
 class Unit
 {
 public:
-    Unit();
+    static Unit GameUnits;
+    SDL_Texture*    unitset;
 
-    int unit_id;
+    Unit();
 
     enum Type {
         UNIT_TYPE_X = 0,
         UNIT_TYPE_O = 1,
         UNIT_TYPE_NONE = 2
     };
+
+    bool Initialize();
+    void OnRender(SDL_Renderer* renderer);
+    void SetCell(int id);
+
+private:
+    int currentPlayer;
+
+    int unit_id;
+
+    SDL_Rect* unit_clips;
+    std::vector<Unit> unit_list;
 };
 
 #endif
