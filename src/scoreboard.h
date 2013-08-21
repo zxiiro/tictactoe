@@ -19,38 +19,25 @@
 
 **********************************************************************/
 
-#ifndef _CENGINE_H_
-#define _CENGINE_H_
+#ifndef _CSCOREBOARD_H_
+#define _CSCOREBOARD_H_
 
 #include <SDL2/SDL.h>
 
-#include "board.h"
 #include "global.h"
 #include "painter.h"
-#include "scoreboard.h"
 
-class Engine
+class ScoreBoard
 {
-private:
-    bool running;
-
-    SDL_Renderer*   renderer;
-    SDL_Window*     window;
-
 public:
-    Engine();
+    static ScoreBoard    GameScoreBoard;
+    SDL_Texture*    scoreboardset;
+
+    ScoreBoard();
 
     bool Initialize();
-    void Cleanup();
 
-    int Execute();
-
-    // Events
-    void OnEvent(SDL_Event* event);
-    void OnLoop();
-    void OnRender();
-
-    void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
+    void OnRender(SDL_Renderer* renderer);
 };
 
 #endif

@@ -76,6 +76,19 @@ bool Engine::Initialize()
     Board::GameBoard.tileset = Painter::LoadImage(renderer, "gfx/tiles.png");
     Board::GameBoard.unitset = Painter::LoadImage(renderer, "gfx/units.png");
 
+    /**********************
+        Load ScoreBoard
+     **********************/
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        "Initializing scoreboard...");
+    if (ScoreBoard::GameScoreBoard.Initialize() == false)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "Failed to initialize game scoreboard.");
+    }
+    ScoreBoard::GameScoreBoard.scoreboardset = Painter::LoadImage(renderer, "gfx/scoreboard.png");
+
     /****************
         Finish up
      ****************/
@@ -148,6 +161,7 @@ void Engine::OnRender()
     SDL_RenderClear(renderer);
 
     Board::GameBoard.OnRender(renderer);
+    ScoreBoard::GameScoreBoard.OnRender(renderer);
 
     SDL_RenderPresent(renderer);
 }
