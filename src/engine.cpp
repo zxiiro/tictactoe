@@ -182,12 +182,15 @@ void Engine::OnRender()
          Mouse Events
  ****************************/
 void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
-    // Divide mouse coordinates by the tile's size to find out where the unit should be put
-    int id = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-    id = id + ((mouse_y / (TILE_SIZE * ZOOM_LEVEL)) * 3);
+    // Check if mouse x and y are actually in the board
+    if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
+        // Divide mouse coordinates by the tile's size to find out where the unit should be put
+        int id = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
+        id = id + ((mouse_y / (TILE_SIZE * ZOOM_LEVEL)) * 3);
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "User is left clicking at cell: %i\n", id);
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+                "User is left clicking at cell: %i", id);
 
-    Unit::GameUnits.SetCell(id);
+        Unit::GameUnits.SetCell(id);
+    }
 }
