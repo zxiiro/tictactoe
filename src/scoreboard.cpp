@@ -19,39 +19,30 @@
 
 **********************************************************************/
 
-#ifndef _CENGINE_H_
-#define _CENGINE_H_
-
-#include <SDL2/SDL.h>
-
-#include "board.h"
-#include "global.h"
-#include "painter.h"
-#include "unit.h"
 #include "scoreboard.h"
 
-class Engine
+ScoreBoard ScoreBoard::GameScoreBoard;
+
+ScoreBoard::ScoreBoard()
 {
-private:
-    bool running;
+    scoreboardset = NULL;
+}
 
-    SDL_Renderer*   renderer;
-    SDL_Window*     window;
+/**
+ * Initializes the scoreboard
+ */
+bool ScoreBoard::Initialize()
+{
+    return true;
+}
 
-    bool Initialize();
-    void Cleanup();
+void ScoreBoard::OnRender(SDL_Renderer* renderer)
+{
+    SDL_Rect pos;
+    pos.x = 3 * TILE_SIZE * ZOOM_LEVEL;
+    pos.y = 0;
+    pos.w = 64 * ZOOM_LEVEL;
+    pos.h = 96 * ZOOM_LEVEL;
 
-    // Events
-    void OnEvent(SDL_Event* event);
-    void OnLoop();
-    void OnRender();
-
-    void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
-
-public:
-    Engine();
-
-    int Execute();
-};
-
-#endif
+    Painter::DrawImage(renderer, scoreboardset, &pos, NULL);
+}
