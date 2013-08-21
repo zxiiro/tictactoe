@@ -78,6 +78,8 @@ bool Engine::Initialize()
     /*****************
         Load Units
      *****************/
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "Initializing units...");
     if (Unit::GameUnits.Initialize() == false) 
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
