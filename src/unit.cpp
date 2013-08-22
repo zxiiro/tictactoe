@@ -27,14 +27,15 @@ Unit::Unit() {
     unitset = NULL;
     unit_clips = new SDL_Rect[2];
 
-    unit_id = UNIT_TYPE_NONE;
+    state = UNIT_STATE_NONE;
+    lastHover = 0;
 }
 
 bool Unit::Initialize() {
     /**********************
        Set Current Player
      **********************/
-    currentPlayer = 0;
+    currentPlayer = UNIT_TYPE_X;
 
     /*************************
         Load unitset clips
@@ -54,11 +55,6 @@ bool Unit::Initialize() {
         Unit tmp_unit;
         unit_list.push_back(tmp_unit);
     }
-
-    /**************************************
-       Initialize unit transparecy vector
-     **************************************/
-    ResetTransparentUnitList();
 
     return true;
 }
@@ -81,20 +77,16 @@ void Unit::OnRender(SDL_Renderer* renderer) {
         unit_pos.w = TILE_SIZE * ZOOM_LEVEL;
         unit_pos.h = TILE_SIZE * ZOOM_LEVEL;
 
-        // Check if there's any units in the transparency list that need to be drawn
-        if (unit_list_transparent[i].unit_id != Unit::UNIT_TYPE_NONE) {
-            // Alpha can be set between 0 to 255
-            SDL_SetTextureAlphaMod(unitset, 100);
-
-            int unit_clip_id = unit_list_transparent[i].unit_id;
-            Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
-        }
-
-        // Check if the units in the list need to actually be drawn
-        if (unit_list[i].unit_id != Unit::UNIT_TYPE_NONE) {
+        if (unit_list[i].state == UNIT_STATE_PLACED) {
             SDL_SetTextureAlphaMod(unitset, 255);
 
-            int unit_clip_id = unit_list[i].unit_id;
+            int unit_clip_id = unit_list[i].type;
+            Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
+        }
+        else if (unit_list[i].state == UNIT_STATE_TRANSPARENT) {
+            SDL_SetTextureAlphaMod(unitset, 100);
+
+            int unit_clip_id = unit_list[i].type;
             Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
         }
     }
@@ -104,35 +96,37 @@ void Unit::SetCell(int id)
 {
     if (id < 0 || id >= 9) return;
 
-    // Check if the cell in the unit list is NONE, otherwise it will overwrite existing units
-    if (unit_list[id].unit_id == Unit::UNIT_TYPE_NONE) {
-        if (currentPlayer == 0) {
-            unit_list[id].unit_id = Unit::UNIT_TYPE_X;
-            currentPlayer = 1;
-        } else if (currentPlayer == 1) {
-            unit_list[id].unit_id = Unit::UNIT_TYPE_O;
-            currentPlayer = 0;
+    if (unit_list[id].state != UNIT_STATE_PLACED) {
+        if (currentPlayer == UNIT_TYPE_X) {
+            unit_list[id].type = UNIT_TYPE_X;
+            unit_list[id].state = UNIT_STATE_PLACED;
+            currentPlayer = UNIT_TYPE_O;
+        } else if (currentPlayer == UNIT_TYPE_O) {
+            unit_list[id].type = UNIT_TYPE_O;
+            unit_list[id].state = UNIT_STATE_PLACED;
+            currentPlayer = UNIT_TYPE_X;
         }
     }
-} 
+}
 
 void Unit::SetTransparentCell(int id)
 {
     if (id < 0 || id >= 9) return;
 
-    ResetTransparentUnitList();
-    if (currentPlayer == 0) {
-        unit_list_transparent[id].unit_id = Unit::UNIT_TYPE_X;
-    } else if (currentPlayer == 1) {
-        unit_list_transparent[id].unit_id = Unit::UNIT_TYPE_O;
-    }
-}
+    // Unset the previously hovered cell (remove transparent unit)
+    if (unit_list[lastHover].state == UNIT_STATE_TRANSPARENT)
+        unit_list[lastHover].state = UNIT_STATE_NONE;
 
-void Unit::ResetTransparentUnitList()
-{
-    unit_list_transparent.clear();
-    for (int i = 0; i < 9; i++) {
-        Unit tmp_unit;
-        unit_list_transparent.push_back(tmp_unit);
+    // Check if the cell in the unit list is NONE, otherwise it will overwrite existing units
+    if (unit_list[id].state == UNIT_STATE_NONE) {
+        if (currentPlayer == UNIT_TYPE_X) {
+            unit_list[id].type = UNIT_TYPE_X;
+            unit_list[id].state = UNIT_STATE_TRANSPARENT;
+        } else if (currentPlayer == UNIT_TYPE_O) {
+            unit_list[id].type = UNIT_TYPE_O;
+            unit_list[id].state = UNIT_STATE_TRANSPARENT;
+        }
+        // Finally the new last hover is now the cell we set as transparent
+        lastHover = id;
     }
 }

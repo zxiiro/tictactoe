@@ -44,20 +44,24 @@ public:
 
 private:
     int currentPlayer;
+    int lastHover;
 
-    int unit_id;
+    enum State {
+        UNIT_STATE_PLACED,
+        UNIT_STATE_TRANSPARENT,
+        UNIT_STATE_NONE
+    };
+
+    enum Type {
+        UNIT_TYPE_X,
+        UNIT_TYPE_O 
+    };
+
+    State state;
+    Type type;
 
     SDL_Rect* unit_clips;
     std::vector<Unit> unit_list;
-    std::vector<Unit> unit_list_transparent;
-
-    enum Type {
-        UNIT_TYPE_X = 0,
-        UNIT_TYPE_O = 1,
-        UNIT_TYPE_NONE = 2
-    };
-
-    void ResetTransparentUnitList();
 };
 
 #endif
