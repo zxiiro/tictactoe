@@ -1,5 +1,5 @@
-/**********************************************************************
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
     Copyright (c) 2013 Thanh Ha
 
     This file is part of sdl-tictactoe.
@@ -16,27 +16,12 @@
 
     You should have received a copy of the GNU General Public License
     along with sdl-tictactoe.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="custom_rules">
+  <target name="-pre-compile">
+    <copy toDir="assets/gfx" >
+      <fileset dir="../gfx" excludes="**/*.xcf" />
+    </copy>
+  </target>
+</project>
 
-**********************************************************************/
-
-#ifndef _CPAINTER_H_
-#define _CPAINTER_H_
-
-#ifdef ANDROID
-#include <SDL.h>
-#include <SDL_image.h>
-#else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#endif
-
-class Painter {
-public:
-    Painter();
-
-    // Tools for painting to the renderer
-    static SDL_Texture* LoadImage(SDL_Renderer* renderer, const char* file);
-    static bool DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip);
-};
-
-#endif

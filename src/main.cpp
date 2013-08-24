@@ -19,18 +19,22 @@
 
 **********************************************************************/
 
-#include <boost/program_options.hpp>
-#include <SDL2/SDL.h>
+#ifdef ANDROID
+    #include <SDL.h>
+#else
+    #include <boost/program_options.hpp>
+    namespace po = boost::program_options;
+    #include <SDL2/SDL.h>
+#endif // ANDROID
 
 #include "engine.h"
-
-namespace po = boost::program_options;
 
 int main(int argc, char** argv)
 {
     /********************************
         Parse commandline options
      ********************************/
+    #ifndef ANDROID
     po::options_description desc("Allowed options");
     desc.add_options()
         ("debug", "enable debug logs")
@@ -44,6 +48,7 @@ int main(int argc, char** argv)
     if (vm.count("debug")) {
         SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG);
     }
+    #endif // ANDROID
 
     /****************************
         Start the game Engine

@@ -24,7 +24,11 @@
 
 #include <queue>
 
+#ifdef ANDROID
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "digits.h"
 #include "global.h"

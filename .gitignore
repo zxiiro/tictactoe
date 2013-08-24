@@ -12,6 +12,16 @@
 *.la
 *.a
 
+# Android
+android/local.properties
+android/assets/
+android/bin/
+android/obj/
+android/gen/
+android/jni/SDL2
+android/jni/SDL2_image
+
+
 # Doxygen
 html/
 

@@ -22,7 +22,11 @@
 #ifndef _CDIGITS_H_
 #define _CDIGITS_H_
 
+#ifdef ANDROID
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "painter.h"
 

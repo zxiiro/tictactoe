@@ -22,7 +22,11 @@
 #ifndef _CENGINE_H_
 #define _CENGINE_H_
 
+#ifdef ANDROID
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "board.h"
 #include "global.h"
