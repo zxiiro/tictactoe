@@ -36,12 +36,11 @@
 class Unit
 {
 public:
-    static Unit GameUnits;
     SDL_Texture*    unitset;
 
     Unit();
 
-    bool Initialize();
+    bool Initialize(SDL_Renderer* renderer);
     void OnRender(SDL_Renderer* renderer);
     void SetCell(int x, int y);
     void SetTransparentCell(int x, int y);

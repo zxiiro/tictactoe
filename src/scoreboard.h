@@ -37,7 +37,6 @@
 class ScoreBoard
 {
 public:
-    static ScoreBoard    GameScoreBoard;
     SDL_Texture*         scoreboardset;
     Digits               digits;
     int                  player1_score;

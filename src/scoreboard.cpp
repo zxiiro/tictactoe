@@ -21,8 +21,6 @@
 
 #include "scoreboard.h"
 
-ScoreBoard ScoreBoard::GameScoreBoard;
-
 ScoreBoard::ScoreBoard()
 {
     scoreboardset = NULL;
@@ -33,10 +31,11 @@ ScoreBoard::ScoreBoard()
  */
 bool ScoreBoard::Initialize(SDL_Renderer* renderer)
 {
-    digits.Initialize(renderer);
-
+    scoreboardset = Painter::LoadImage(renderer, "gfx/scoreboard.png");
     player1_score = 0;
     player2_score = 0;
+
+    digits.Initialize(renderer);
 
     return true;
 }

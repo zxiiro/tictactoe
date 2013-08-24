@@ -37,8 +37,10 @@
 class Engine
 {
 private:
-    bool running;
-    bool match_inprogress;
+    bool            running;
+    bool            match_inprogress;
+    Board           gameboard;
+    ScoreBoard      scoreboard;
 
     SDL_Renderer*   renderer;
     SDL_Window*     window;

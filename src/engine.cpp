@@ -69,24 +69,12 @@ bool Engine::Initialize()
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initializing board...");
-    if (Board::GameBoard.Initialize() == false)
+    if (gameboard.Initialize(renderer) == false)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to initialize game board.");
+        return false;
     }
-    Board::GameBoard.tileset = Painter::LoadImage(renderer, "gfx/tiles.png");
-
-    /*****************
-        Load Units
-     *****************/
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "Initializing units...");
-    if (Unit::GameUnits.Initialize() == false)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "Failed to initialize game units.");
-    }
-    Unit::GameUnits.unitset = Painter::LoadImage(renderer, "gfx/units.png");
 
     /**********************
         Load ScoreBoard
@@ -94,12 +82,12 @@ bool Engine::Initialize()
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initializing scoreboard...");
-    if (ScoreBoard::GameScoreBoard.Initialize(renderer) == false)
+    if (scoreboard.Initialize(renderer) == false)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to initialize game scoreboard.");
+        return false;
     }
-    ScoreBoard::GameScoreBoard.scoreboardset = Painter::LoadImage(renderer, "gfx/scoreboard.png");
 
     /****************
         Finish up
@@ -176,9 +164,8 @@ void Engine::OnRender()
 {
     SDL_RenderClear(renderer);
 
-    Board::GameBoard.OnRender(renderer);
-    Unit::GameUnits.OnRender(renderer);
-    ScoreBoard::GameScoreBoard.OnRender(renderer);
+    gameboard.OnRender(renderer);
+    scoreboard.OnRender(renderer);
 
     SDL_RenderPresent(renderer);
 }
@@ -187,26 +174,13 @@ void Engine::OnRender()
          Mouse Events
  ****************************/
 void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
-    // Check if mouse x and y are actually in the board
-    if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
-        // Divide mouse coordinates by the tile's size to find out where the unit should be put
-        int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-        int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
-
-        // Place player unit only if the match is in progress
-        if (match_inprogress) Unit::GameUnits.SetCell(x, y);
+    if (match_inprogress) {
+        gameboard.PlaceUnit(mouse_x, mouse_y);
     }
 }
 
 void Engine::OnMouseMove(int mouse_x, int mouse_y) {
-    // Check if mouse x and y are actually in the board
-    if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
-        // Divide mouse coordinates by the tile's size to find out where the unit should be put
-        int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-        int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
-
-        // Draw transparent unit of current player at mouse position
-        // only if match is in progress
-        if (match_inprogress) Unit::GameUnits.SetTransparentCell(x, y);
+    if (match_inprogress) {
+        gameboard.HoverUnit(mouse_x, mouse_y);
     }
 }

@@ -33,24 +33,25 @@
 #include "global.h"
 #include "painter.h"
 #include "tile.h"
+#include "unit.h"
 
 class Board
 {
-public:
-    static Board    GameBoard;
-
 private:
-    SDL_Rect* tile_clips;
-    std::vector<Tile> tile_list;
+    SDL_Rect*           tile_clips;
+    std::vector<Tile>   tile_list;
+    Unit                gameunits;
 
 public:
     SDL_Texture*    tileset;
 
     Board();
 
-    bool Initialize();
-
+    bool Initialize(SDL_Renderer* renderer);
     void OnRender(SDL_Renderer* renderer);
+
+    void PlaceUnit(int mouse_x, int mouse_y);
+    void HoverUnit(int mouse_x, int mouse_y);
 };
 
 #endif

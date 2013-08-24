@@ -21,8 +21,6 @@
 
 #include "unit.h"
 
-Unit Unit::GameUnits;
-
 Unit::Unit()
 {
     unitset = NULL;
@@ -34,7 +32,7 @@ Unit::Unit()
     last_hover_y = 0;
 }
 
-bool Unit::Initialize()
+bool Unit::Initialize(SDL_Renderer* renderer)
 {
     /**********************
        Set Current Player
@@ -46,9 +44,11 @@ bool Unit::Initialize()
      **********************/
     moveCount = 0;
 
-    /*************************
-        Load unitset clips
-     *************************/
+    /***************************
+        Load unitset & clips
+     ***************************/
+    unitset = Painter::LoadImage(renderer, "gfx/units.png");
+
     for (int i = 0; i < 2; i++) {
         unit_clips[i].x = i * 32;
         unit_clips[i].y = 0;
