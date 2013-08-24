@@ -189,13 +189,10 @@ void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
     // Check if mouse x and y are actually in the board
     if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
         // Divide mouse coordinates by the tile's size to find out where the unit should be put
-        int id = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-        id = id + ((mouse_y / (TILE_SIZE * ZOOM_LEVEL)) * 3);
+        int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
+        int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-                "User is left clicking at cell: %i", id);
-
-        Unit::GameUnits.SetCell(id);
+        Unit::GameUnits.SetCell(x, y);
     }
 }
 
@@ -203,9 +200,9 @@ void Engine::OnMouseMove(int mouse_x, int mouse_y) {
     // Check if mouse x and y are actually in the board
     if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
         // Divide mouse coordinates by the tile's size to find out where the unit should be put
-        int id = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-        id = id + ((mouse_y / (TILE_SIZE * ZOOM_LEVEL)) * 3);
+        int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
+        int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        Unit::GameUnits.SetTransparentCell(id);
+        Unit::GameUnits.SetTransparentCell(x, y);
     }
 }

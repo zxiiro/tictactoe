@@ -43,12 +43,14 @@ public:
 
     bool Initialize();
     void OnRender(SDL_Renderer* renderer);
-    void SetCell(int id);
-    void SetTransparentCell(int id);
+    void SetCell(int x, int y);
+    void SetTransparentCell(int x, int y);
 
 private:
     int currentPlayer;
-    int lastHover;
+    int last_hover_x;
+    int last_hover_y;
+    int moveCount;
 
     enum State {
         UNIT_STATE_PLACED,
@@ -58,14 +60,15 @@ private:
 
     enum Type {
         UNIT_TYPE_X,
-        UNIT_TYPE_O 
+        UNIT_TYPE_O,
+        UNIT_TYPE_NONE
     };
 
     State state;
     Type type;
 
     SDL_Rect* unit_clips;
-    std::vector<Unit> unit_list;
+    std::vector< std::vector<Unit> > unit_list;
 };
 
 #endif
