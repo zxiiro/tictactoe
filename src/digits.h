@@ -19,42 +19,22 @@
 
 **********************************************************************/
 
-#ifndef _CSCOREBOARD_H_
-#define _CSCOREBOARD_H_
-
-#include <queue>
+#ifndef _CDIGITS_H_
+#define _CDIGITS_H_
 
 #include <SDL2/SDL.h>
 
-#include "digits.h"
-#include "global.h"
 #include "painter.h"
 
-class ScoreBoard
+class Digits
 {
 public:
-    static ScoreBoard    GameScoreBoard;
-    SDL_Texture*         scoreboardset;
-    Digits               digits;
-    int                  player1_score;
-    int                  player2_score;
+    SDL_Texture*    digits;
+    SDL_Rect*       digits_clips;
 
-    ScoreBoard();
+    Digits();
 
     bool Initialize(SDL_Renderer* renderer);
-    void OnRender(SDL_Renderer* renderer);
-
-    void AddPointPlayer1();
-    void AddPointPlayer2();
-
-private:
-    // Offsets for where to draw each player's scoreboard
-    static const int    PLAYER1_X_OFFSET = 7;
-    static const int    PLAYER1_Y_OFFSET = 34;
-    static const int    PLAYER2_X_OFFSET = 21;
-    static const int    PLAYER2_Y_OFFSET = 70;
-
-    std::queue<int> GetDigits(int number);
 };
 
 #endif

@@ -19,42 +19,32 @@
 
 **********************************************************************/
 
-#ifndef _CSCOREBOARD_H_
-#define _CSCOREBOARD_H_
+#include "scoreboard.h"
 
-#include <queue>
-
-#include <SDL2/SDL.h>
-
-#include "digits.h"
-#include "global.h"
-#include "painter.h"
-
-class ScoreBoard
+Digits::Digits()
 {
-public:
-    static ScoreBoard    GameScoreBoard;
-    SDL_Texture*         scoreboardset;
-    Digits               digits;
-    int                  player1_score;
-    int                  player2_score;
+    digits = NULL;
+    digits_clips = new SDL_Rect[10];
+}
 
-    ScoreBoard();
+/**
+ * Initializes the scoreboard
+ */
+bool Digits::Initialize(SDL_Renderer* renderer)
+{
+    digits = Painter::LoadImage(renderer, "gfx/numbers.png");
+    if (digits == NULL) {
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+            "Failed to load digits.");
+        return false;
+    }
 
-    bool Initialize(SDL_Renderer* renderer);
-    void OnRender(SDL_Renderer* renderer);
+    for (int i = 0; i < 10; i++) {
+        digits_clips[i].x = i * 6;
+        digits_clips[i].y = 0;
+        digits_clips[i].w = 6;
+        digits_clips[i].h = 9;
+    }
 
-    void AddPointPlayer1();
-    void AddPointPlayer2();
-
-private:
-    // Offsets for where to draw each player's scoreboard
-    static const int    PLAYER1_X_OFFSET = 7;
-    static const int    PLAYER1_Y_OFFSET = 34;
-    static const int    PLAYER2_X_OFFSET = 21;
-    static const int    PLAYER2_Y_OFFSET = 70;
-
-    std::queue<int> GetDigits(int number);
-};
-
-#endif
+    return true;
+}

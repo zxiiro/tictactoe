@@ -80,7 +80,7 @@ bool Engine::Initialize()
      *****************/
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
             "Initializing units...");
-    if (Unit::GameUnits.Initialize() == false) 
+    if (Unit::GameUnits.Initialize() == false)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to initialize game units.");
@@ -93,7 +93,7 @@ bool Engine::Initialize()
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initializing scoreboard...");
-    if (ScoreBoard::GameScoreBoard.Initialize() == false)
+    if (ScoreBoard::GameScoreBoard.Initialize(renderer) == false)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to initialize game scoreboard.");
