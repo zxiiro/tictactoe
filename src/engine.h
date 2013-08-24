@@ -38,6 +38,7 @@ class Engine
 {
 private:
     bool running;
+    bool match_inprogress;
 
     SDL_Renderer*   renderer;
     SDL_Window*     window;

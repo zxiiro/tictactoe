@@ -24,6 +24,7 @@
 Engine::Engine()
 {
     running = true;
+    match_inprogress = true;
 };
 
 /**************************************
@@ -192,7 +193,8 @@ void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
         int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
         int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        Unit::GameUnits.SetCell(x, y);
+        // Place player unit only if the match is in progress
+        if (match_inprogress) Unit::GameUnits.SetCell(x, y);
     }
 }
 
@@ -203,6 +205,8 @@ void Engine::OnMouseMove(int mouse_x, int mouse_y) {
         int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
         int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        Unit::GameUnits.SetTransparentCell(x, y);
+        // Draw transparent unit of current player at mouse position
+        // only if match is in progress
+        if (match_inprogress) Unit::GameUnits.SetTransparentCell(x, y);
     }
 }
