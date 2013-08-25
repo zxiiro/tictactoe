@@ -124,17 +124,7 @@ bool Engine::Initialize()
          Initialize Unit Array
      *****************************/
 
-    unit_list.clear();
-    for (int y = 0; y < 3; y++) {
-        std::vector<Unit> tmp_unit_list;
-
-        for (int x = 0; x < 3; x++) {
-            Unit tmp_unit;
-            tmp_unit_list.push_back(tmp_unit);
-        }
-
-        unit_list.push_back(tmp_unit_list);
-    }
+    ResetBoard();
 
     /****************
         Finish up
@@ -221,7 +211,6 @@ void Engine::OnRender()
 
     // Display rematch button if match is not in progress
     if (!match_inprogress) {
-        SDL_Log("Test");
         DrawRematchPopup();
     }
 
@@ -236,6 +225,10 @@ void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
     if (match_inprogress) {
         PlaceUnit(mouse_x, mouse_y);
     }
+    else
+    {
+        if (RematchClicked(mouse_x, mouse_y)) Rematch();
+    }
 }
 
 void Engine::OnMouseMove(int mouse_x, int mouse_y) {
@@ -246,9 +239,54 @@ void Engine::OnMouseMove(int mouse_x, int mouse_y) {
     }
 }
 
+/*
+ * Initiates a rematch if the user clicks rematch button
+ */
+bool Engine::RematchClicked(int mouse_x, int mouse_y)
+{
+    int popup_pos_x = (WWIDTH - 96 * ZOOM_LEVEL) / 2;
+    int popup_pos_y = (WHEIGHT - 64 * ZOOM_LEVEL) / 2;
+
+    if ((mouse_x > popup_pos_x) &&
+        (mouse_x < popup_pos_x + 96 * ZOOM_LEVEL) &&
+        (mouse_y > popup_pos_y) &&
+        (mouse_y < popup_pos_y + 64 * ZOOM_LEVEL))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 /***********************
     Tic Tac Toe Logic
  ***********************/
+void Engine::ResetBoard()
+{
+    move_count = 0;
+    current_player = Unit::UNIT_TYPE_X;
+    winner = Unit::UNIT_TYPE_NONE;
+
+    // Initialize the units array
+    unit_list.clear();
+    for (int y = 0; y < 3; y++) {
+        std::vector<Unit> tmp_unit_list;
+
+        for (int x = 0; x < 3; x++) {
+            Unit tmp_unit;
+            tmp_unit_list.push_back(tmp_unit);
+        }
+
+        unit_list.push_back(tmp_unit_list);
+    }
+}
+
+void Engine::Rematch()
+{
+    ResetBoard();
+    match_inprogress = true;
+
+}
 
 void Engine::DrawRematchPopup()
 {

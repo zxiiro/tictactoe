@@ -63,8 +63,11 @@ private:
 
     void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
     void OnMouseMove(int mouse_x, int mouse_y);
+    bool RematchClicked(int mouse_x, int mouse_y);
 
     // Tic Tac Toe Logic
+    void ResetBoard();
+    void Rematch();
     void DrawRematchPopup();
     void CheckWinner(int x, int y, Unit::Type current_unit_type);
     void PlaceUnit(int mouse_x, int mouse_y);
