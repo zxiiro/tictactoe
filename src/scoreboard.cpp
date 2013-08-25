@@ -42,6 +42,7 @@ bool ScoreBoard::Initialize(SDL_Renderer* renderer)
 
 void ScoreBoard::Cleanup()
 {
+    digits.Cleanup();
     SDL_DestroyTexture(scoreboardset);
 }
 

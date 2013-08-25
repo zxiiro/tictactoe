@@ -48,3 +48,8 @@ bool Digits::Initialize(SDL_Renderer* renderer)
 
     return true;
 }
+
+void Digits::Cleanup()
+{
+    SDL_DestroyTexture(digits);
+}

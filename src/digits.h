@@ -39,6 +39,7 @@ public:
     Digits();
 
     bool Initialize(SDL_Renderer* renderer);
+    void Cleanup();
 };
 
 #endif
