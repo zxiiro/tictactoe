@@ -45,6 +45,12 @@ private:
     SDL_Renderer*   renderer;
     SDL_Window*     window;
 
+    int             last_hover_x;
+    int             last_hover_y;
+    int             current_player;
+    int             move_count;
+    std::vector< std::vector<Unit> > unit_list;
+
     bool Initialize();
     void Cleanup();
 
@@ -57,6 +63,7 @@ private:
     void OnMouseMove(int mouse_x, int mouse_y);
 
     // Tic Tac Toe Logic
+    void CheckWinner(int x, int y, Unit::Type current_unit_type);
     void PlaceUnit(int mouse_x, int mouse_y);
     void HoverUnit(int mouse_x, int mouse_y);
 

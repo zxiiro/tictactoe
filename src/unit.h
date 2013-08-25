@@ -36,21 +36,7 @@
 class Unit
 {
 public:
-    SDL_Texture*    unitset;
-
-    Unit();
-
-    bool Initialize(SDL_Renderer* renderer);
-    void Cleanup();
-    void OnRender(SDL_Renderer* renderer);
-    void SetCell(int x, int y);
-    void SetTransparentCell(int x, int y);
-
-private:
-    int currentPlayer;
-    int last_hover_x;
-    int last_hover_y;
-    int moveCount;
+    SDL_Texture* unitset;
 
     enum State {
         UNIT_STATE_PLACED,
@@ -67,8 +53,14 @@ private:
     State state;
     Type type;
 
+    Unit();
+
+    bool Initialize(SDL_Renderer* renderer);
+    void Cleanup();
+    void OnRender(SDL_Renderer* renderer, std::vector< std::vector<Unit> > &unit_list);
+
+private:
     SDL_Rect* unit_clips;
-    std::vector< std::vector<Unit> > unit_list;
 };
 
 #endif

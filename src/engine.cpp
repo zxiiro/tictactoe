@@ -25,6 +25,11 @@ Engine::Engine()
 {
     running = true;
     match_inprogress = true;
+
+    last_hover_x = 0;
+    last_hover_y = 0;
+    current_player = Unit::UNIT_TYPE_X;
+    move_count = 0;
 };
 
 /**************************************
@@ -79,6 +84,7 @@ bool Engine::Initialize()
     /*****************
         Load Units
      *****************/
+    
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
             "Initializing units...");
     if (gameunits.Initialize(renderer) == false)
@@ -99,6 +105,22 @@ bool Engine::Initialize()
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to initialize game scoreboard.");
         return false;
+    }
+
+    /*****************************
+         Initialize Unit Array
+     *****************************/
+
+    unit_list.clear();
+    for (int x = 0; x < 3; x++) {
+        std::vector<Unit> tmp_unit_list;
+
+        for (int y = 0; y < 3; y++) {
+            Unit tmp_unit;
+            tmp_unit_list.push_back(tmp_unit);
+        }
+
+        unit_list.push_back(tmp_unit_list);
     }
 
     /****************
@@ -180,7 +202,7 @@ void Engine::OnRender()
     SDL_RenderClear(renderer);
 
     gameboard.OnRender(renderer);
-    gameunits.OnRender(renderer);
+    gameunits.OnRender(renderer, unit_list);
     scoreboard.OnRender(renderer);
 
     SDL_RenderPresent(renderer);
@@ -190,12 +212,15 @@ void Engine::OnRender()
          Mouse Events
  ****************************/
 void Engine::OnMouseLeftButtonDown(int mouse_x, int mouse_y) {
+    // Place player unit only if the match is in progress
     if (match_inprogress) {
         PlaceUnit(mouse_x, mouse_y);
     }
 }
 
 void Engine::OnMouseMove(int mouse_x, int mouse_y) {
+    // Draw transparent unit of current player at mouse position
+    // only if match is in progress
     if (match_inprogress) {
         HoverUnit(mouse_x, mouse_y);
     }
@@ -204,6 +229,96 @@ void Engine::OnMouseMove(int mouse_x, int mouse_y) {
 /***********************
     Tic Tac Toe Logic
  ***********************/
+void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
+{
+    // Check columns
+    for (unsigned int i = 0; i < unit_list.size(); i++) {
+        // If there's any units that aren't placed, then exit loop
+        if (unit_list[x][i].type != current_unit_type)
+            break;
+
+        // If all units are placed on the board then there must be a clear winner
+        if (i == unit_list.size() - 1) {
+            // Determine winner (X or O)
+            if (unit_list[x][i].type == Unit::UNIT_TYPE_X) {
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                        "Player %i won!", Unit::UNIT_TYPE_X + 1);
+            }
+            else if (unit_list[x][i].type == Unit::UNIT_TYPE_O) {
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                        "Player %i won!", Unit::UNIT_TYPE_O + 1);
+            }
+        }
+    }
+
+    // Check rows
+    for (unsigned int i = 0; i < unit_list.size(); i++) {
+        // If there's any units that aren't placed, then exit loop
+        if (unit_list[i][y].type != current_unit_type)
+            break;
+
+        // If all units are placed on the board then there must be a clear winner
+        if (i == unit_list.size() - 1) {
+            // Determine winner (X or O)
+            if (unit_list[i][y].type == Unit::UNIT_TYPE_X) {
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                        "Player %i won!", Unit::UNIT_TYPE_X + 1);
+            }
+            else if (unit_list[i][y].type == Unit::UNIT_TYPE_O) {
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                        "Player %i won!", Unit::UNIT_TYPE_O + 1);
+            }
+        }
+    }
+
+    // Check diagonals
+    if (x == y) {
+        for (unsigned int i = 0; i < unit_list.size(); i++) {
+            // If there's any units that aren't placed, then exit loop
+            if (unit_list[i][i].type != current_unit_type)
+                break;
+
+            // If all units are placed on the board then there must be a clear winner
+            if (i == unit_list.size() - 1) {
+                // Determine winner (X or O)
+                if (unit_list[i][i].type == Unit::UNIT_TYPE_X) {
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                            "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                }
+                else if (unit_list[i][i].type == Unit::UNIT_TYPE_O) {
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                            "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                }
+            }
+        }
+    }
+
+    // Check Anti Diagonals
+    for (unsigned int i = 0; i < unit_list.size(); i++) {
+        // If there's any units that aren't placed, then exit loop
+        if (unit_list[i][(unit_list.size() - 1) - i].type != current_unit_type)
+            break;
+
+        // If all units are placed on the board then there must be a clear winner
+        if (i == unit_list.size() - 1) {
+            // Determine winner (X or O)
+            if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_X) {
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                            "Player %i won!", Unit::UNIT_TYPE_X + 1);
+            }
+            else if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_O) {
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                            "Player %i won!", Unit::UNIT_TYPE_O + 1);
+            }
+        }
+    }
+
+    // Check for Draw
+    if (move_count >= 9) {
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "It's a draw!");
+    }
+}
 void Engine::PlaceUnit(int mouse_x, int mouse_y)
 {
     // Check if mouse x and y are actually in the board
@@ -212,8 +327,29 @@ void Engine::PlaceUnit(int mouse_x, int mouse_y)
         int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
         int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        // Place player unit only if the match is in progress
-        gameunits.SetCell(x, y);
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Player %i moves to %ix%i", current_player + 1, x, y);
+
+        Unit::Type current_unit_type = Unit::UNIT_TYPE_NONE;
+
+        // Check if the cell in the unit list hasn't been placed, otherwise it will overwrite existing units
+        if (unit_list[x][y].state != Unit::UNIT_STATE_PLACED) {
+            move_count++;
+            if (current_player == Unit::UNIT_TYPE_X) {
+                current_unit_type = Unit::UNIT_TYPE_X;
+                unit_list[x][y].type = Unit::UNIT_TYPE_X;
+                unit_list[x][y].state = Unit::UNIT_STATE_PLACED;
+                current_player = Unit::UNIT_TYPE_O;
+            }
+            else if (current_player == Unit::UNIT_TYPE_O) {
+                current_unit_type = Unit::UNIT_TYPE_O;
+                unit_list[x][y].type = Unit::UNIT_TYPE_O;
+                unit_list[x][y].state = Unit::UNIT_STATE_PLACED;
+                current_player = Unit::UNIT_TYPE_X;
+            }
+        }
+
+        CheckWinner(x, y, current_unit_type);
     }
 }
 
@@ -225,8 +361,27 @@ void Engine::HoverUnit(int mouse_x, int mouse_y)
         int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
         int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        // Draw transparent unit of current player at mouse position
-        // only if match is in progress
-        gameunits.SetTransparentCell(x, y);
+
+        // Unset the previously hovered cell (remove transparent unit)
+        if (unit_list[last_hover_x][last_hover_y].state == Unit::UNIT_STATE_TRANSPARENT) {
+            unit_list[last_hover_x][last_hover_y].state = Unit::UNIT_STATE_NONE;
+            unit_list[last_hover_x][last_hover_y].type = Unit::UNIT_TYPE_NONE;
+        }
+    
+        // Check if the cell in the unit list is NONE, otherwise it will overwrite existing units
+        if (unit_list[x][y].state == Unit::UNIT_STATE_NONE) {
+            if (current_player == Unit::UNIT_TYPE_X) {
+                unit_list[x][y].type = Unit::UNIT_TYPE_X;
+                unit_list[x][y].state = Unit::UNIT_STATE_TRANSPARENT;
+            }
+            else if (current_player == Unit::UNIT_TYPE_O) {
+                unit_list[x][y].type = Unit::UNIT_TYPE_O;
+                unit_list[x][y].state = Unit::UNIT_STATE_TRANSPARENT;
+            }
+    
+            // Finally the new last hover is now the cell we set as transparent
+            last_hover_x = x;
+            last_hover_y = y;
+        }
     }
 }
