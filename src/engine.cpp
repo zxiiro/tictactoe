@@ -268,9 +268,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[x][i].type == Unit::UNIT_TYPE_X) {
                 winner = Unit::UNIT_TYPE_X;
                 OnWin();
+                return;
             } else {
                 winner = Unit::UNIT_TYPE_O;
                 OnWin();
+                return;
             }
         }
     }
@@ -287,9 +289,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[i][y].type == Unit::UNIT_TYPE_X) {
                 winner = Unit::UNIT_TYPE_X;
                 OnWin();
+                return;
             } else {
                 winner = Unit::UNIT_TYPE_O;
                 OnWin();
+                return;
             }
         }
     }
@@ -307,9 +311,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
                 if (unit_list[i][i].type == Unit::UNIT_TYPE_X) {
                     winner = Unit::UNIT_TYPE_X;
                     OnWin();
+                    return;
                 } else {
                     winner = Unit::UNIT_TYPE_O;
                     OnWin();
+                    return;
                 }
             }
         }
@@ -327,9 +333,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_X) {
                 winner = Unit::UNIT_TYPE_X;
                 OnWin();
+                return;
             } else {
                 winner = Unit::UNIT_TYPE_O;
                 OnWin();
+                return;
             }
         }
     }
@@ -340,6 +348,7 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
                 "It's a draw!");
         winner = Unit::UNIT_TYPE_NONE;
         match_inprogress = false;
+        return;
     }
 }
 
