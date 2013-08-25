@@ -100,4 +100,5 @@ target_link_libraries(${App_Name}
     )
 
 ## Copy graphics to output
-file(COPY "${CMAKE_SOURCE_DIR}/gfx" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "${CMAKE_SOURCE_DIR}/gfx" DESTINATION "${CMAKE_BINARY_DIR}"
+            PATTERN "gfx/*.xcf" EXCLUDE)
