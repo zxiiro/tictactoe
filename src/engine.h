@@ -49,6 +49,7 @@ private:
     int             last_hover_y;
     int             current_player;
     int             move_count;
+    int             winner;
     std::vector< std::vector<Unit> > unit_list;
 
     bool Initialize();
@@ -66,6 +67,8 @@ private:
     void CheckWinner(int x, int y, Unit::Type current_unit_type);
     void PlaceUnit(int mouse_x, int mouse_y);
     void HoverUnit(int mouse_x, int mouse_y);
+
+    void OnWin();
 
 public:
     Engine();

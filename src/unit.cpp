@@ -52,6 +52,13 @@ void Unit::Cleanup()
     SDL_DestroyTexture(unitset);
 }
 
+/**
+ * Unit's OnRender function, called every frame
+ *
+ * @param renderer Renderer to draw on
+ * @param unit_list A list of units, which is a multi-dimensional array.
+ *
+ */
 void Unit::OnRender(SDL_Renderer* renderer, std::vector< std::vector<Unit> > &unit_list)
 {
     if (unitset == NULL) {
@@ -61,8 +68,8 @@ void Unit::OnRender(SDL_Renderer* renderer, std::vector< std::vector<Unit> > &un
     }
 
     // Draw units (X and O)
-    for (unsigned int x = 0; x < unit_list.size(); x++) {
-        for (unsigned int y = 0; y < unit_list[x].size(); y++) {
+    for (unsigned int y = 0; y < unit_list.size(); y++) {
+        for (unsigned int x = 0; x < unit_list[y].size(); x++) {
             SDL_Rect unit_pos;
             unit_pos.x = x * TILE_SIZE * ZOOM_LEVEL;
             unit_pos.y = y * TILE_SIZE * ZOOM_LEVEL;

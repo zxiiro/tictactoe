@@ -28,8 +28,9 @@ Engine::Engine()
 
     last_hover_x = 0;
     last_hover_y = 0;
-    current_player = Unit::UNIT_TYPE_X;
     move_count = 0;
+    current_player = Unit::UNIT_TYPE_X;
+    winner = Unit::UNIT_TYPE_NONE;
 };
 
 /**************************************
@@ -112,10 +113,10 @@ bool Engine::Initialize()
      *****************************/
 
     unit_list.clear();
-    for (int x = 0; x < 3; x++) {
+    for (int y = 0; y < 3; y++) {
         std::vector<Unit> tmp_unit_list;
 
-        for (int y = 0; y < 3; y++) {
+        for (int x = 0; x < 3; x++) {
             Unit tmp_unit;
             tmp_unit_list.push_back(tmp_unit);
         }
@@ -229,6 +230,30 @@ void Engine::OnMouseMove(int mouse_x, int mouse_y) {
 /***********************
     Tic Tac Toe Logic
  ***********************/
+
+void Engine::OnWin()
+{
+    if (winner == Unit::UNIT_TYPE_X) {
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Player %i won!", Unit::UNIT_TYPE_X + 1);
+        scoreboard.AddPointPlayer1();
+        match_inprogress = false;
+    } else {
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Player %i won!", Unit::UNIT_TYPE_O + 1);
+        scoreboard.AddPointPlayer2();
+        match_inprogress = false;
+    }
+}
+
+/**
+ * Checks through the unit_list(multidimensional array) for a winner
+ *
+ * @param x The x coordinate of the unit_list
+ * @param y The y coordinate of the unit_list
+ * @param current_unit_type The unit type that was last assigned. So it knows what to look for.
+ *
+ */
 void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
 {
     // Check columns
@@ -241,16 +266,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
         if (i == unit_list.size() - 1) {
             // Determine winner (X or O)
             if (unit_list[x][i].type == Unit::UNIT_TYPE_X) {
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                        "Player %i won!", Unit::UNIT_TYPE_X + 1);
-                scoreboard.AddPointPlayer1();
-                match_inprogress = false;
-            }
-            else if (unit_list[x][i].type == Unit::UNIT_TYPE_O) {
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                        "Player %i won!", Unit::UNIT_TYPE_O + 1);
-                scoreboard.AddPointPlayer2();
-                match_inprogress = false;
+                winner = Unit::UNIT_TYPE_X;
+                OnWin();
+            } else {
+                winner = Unit::UNIT_TYPE_O;
+                OnWin();
             }
         }
     }
@@ -265,16 +285,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
         if (i == unit_list.size() - 1) {
             // Determine winner (X or O)
             if (unit_list[i][y].type == Unit::UNIT_TYPE_X) {
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                        "Player %i won!", Unit::UNIT_TYPE_X + 1);
-                scoreboard.AddPointPlayer1();
-                match_inprogress = false;
-            }
-            else if (unit_list[i][y].type == Unit::UNIT_TYPE_O) {
-                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                        "Player %i won!", Unit::UNIT_TYPE_O + 1);
-                scoreboard.AddPointPlayer2();
-                match_inprogress = false;
+                winner = Unit::UNIT_TYPE_X;
+                OnWin();
+            } else {
+                winner = Unit::UNIT_TYPE_O;
+                OnWin();
             }
         }
     }
@@ -290,16 +305,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (i == unit_list.size() - 1) {
                 // Determine winner (X or O)
                 if (unit_list[i][i].type == Unit::UNIT_TYPE_X) {
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                            "Player %i won!", Unit::UNIT_TYPE_X + 1);
-                    scoreboard.AddPointPlayer1();
-                    match_inprogress = false;
-                }
-                else if (unit_list[i][i].type == Unit::UNIT_TYPE_O) {
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                            "Player %i won!", Unit::UNIT_TYPE_O + 1);
-                    scoreboard.AddPointPlayer2();
-                    match_inprogress = false;
+                    winner = Unit::UNIT_TYPE_X;
+                    OnWin();
+                } else {
+                    winner = Unit::UNIT_TYPE_O;
+                    OnWin();
                 }
             }
         }
@@ -315,16 +325,11 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
         if (i == unit_list.size() - 1) {
             // Determine winner (X or O)
             if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_X) {
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                            "Player %i won!", Unit::UNIT_TYPE_X + 1);
-                    scoreboard.AddPointPlayer1();
-                    match_inprogress = false;
-            }
-            else if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_O) {
-                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                            "Player %i won!", Unit::UNIT_TYPE_O + 1);
-                    scoreboard.AddPointPlayer2();
-                    match_inprogress = false;
+                winner = Unit::UNIT_TYPE_X;
+                OnWin();
+            } else {
+                winner = Unit::UNIT_TYPE_O;
+                OnWin();
             }
         }
     }
@@ -333,9 +338,18 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
     if (move_count >= 9) {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "It's a draw!");
+        winner = Unit::UNIT_TYPE_NONE;
         match_inprogress = false;
     }
 }
+
+/**
+ * Places/sets a unit into the unit_list, calculated from mouse coordinates
+ *
+ * @param mouse_x Mouse coordinate x, relative to the window
+ * @param mouse_y Mouse coordinate y, relative to the window
+ *
+ */
 void Engine::PlaceUnit(int mouse_x, int mouse_y)
 {
     // Check if mouse x and y are actually in the board
@@ -370,6 +384,13 @@ void Engine::PlaceUnit(int mouse_x, int mouse_y)
     }
 }
 
+/**
+ * When you hover over a tile, it will add a transparent x or o.
+ *
+ * @param mouse_x Mouse coordinate x, relative to the window.
+ * @param mouse_y Mouse coordinate y, relative to the window.
+ *
+ */
 void Engine::HoverUnit(int mouse_x, int mouse_y)
 {
     // Check if mouse x and y are actually in the board
