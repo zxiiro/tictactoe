@@ -75,6 +75,11 @@ bool Engine::Initialize()
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initializing rematch popup...");
     rematch_popup = Painter::LoadImage(renderer, "gfx/popup.png");
+    if (rematch_popup == NULL) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "Failed to initialize rematch popup.");
+        return false;
+    }
 
     /*****************
         Load Board

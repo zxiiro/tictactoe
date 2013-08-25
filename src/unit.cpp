@@ -36,6 +36,7 @@ bool Unit::Initialize(SDL_Renderer* renderer)
         Load unitset & clips
      ***************************/
     unitset = Painter::LoadImage(renderer, "gfx/units.png");
+    if (unitset == NULL) return false;
 
     for (int i = 0; i < 2; i++) {
         unit_clips[i].x = i * 32;

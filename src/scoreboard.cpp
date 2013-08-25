@@ -32,6 +32,8 @@ ScoreBoard::ScoreBoard()
 bool ScoreBoard::Initialize(SDL_Renderer* renderer)
 {
     scoreboardset = Painter::LoadImage(renderer, "gfx/scoreboard.png");
+    if (scoreboardset == NULL) return false;
+
     player1_score = 0;
     player2_score = 0;
 

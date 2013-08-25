@@ -38,6 +38,7 @@ bool Board::Initialize(SDL_Renderer* renderer)
         Load tileset & clips
      ***************************/
     tileset = Painter::LoadImage(renderer, "gfx/tiles.png");
+    if (tileset == NULL) return false;
 
     for (int i = 0; i < 2; i++) { // Tic Tac Toe only has 2 clips
         tile_clips[i].x = i * 32;
