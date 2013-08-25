@@ -69,19 +69,12 @@ bool Board::Initialize(SDL_Renderer* renderer)
         }
     }
 
-    /*****************
-        Load Units
-     *****************/
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "Initializing units...");
-    if (gameunits.Initialize(renderer) == false)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-            "Failed to initialize game units.");
-        return false;
-    }
-
     return true;
+}
+
+void Board::Cleanup()
+{
+    SDL_DestroyTexture(tileset);
 }
 
 void Board::OnRender(SDL_Renderer* renderer)
@@ -106,37 +99,5 @@ void Board::OnRender(SDL_Renderer* renderer)
             int clip_id = tile_list[tile_id++].tile_id;
             Painter::DrawImage(renderer, tileset, &tile_pos, &tile_clips[clip_id]);
         }
-    }
-
-    gameunits.OnRender(renderer);
-}
-
-/***********************
-    Tic Tac Toe Logic
- ***********************/
-void Board::PlaceUnit(int mouse_x, int mouse_y)
-{
-    // Check if mouse x and y are actually in the board
-    if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
-        // Divide mouse coordinates by the tile's size to find out where the unit should be put
-        int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-        int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
-
-        // Place player unit only if the match is in progress
-        gameunits.SetCell(x, y);
-    }
-}
-
-void Board::HoverUnit(int mouse_x, int mouse_y)
-{
-    // Check if mouse x and y are actually in the board
-    if (mouse_x < TILE_SIZE * ZOOM_LEVEL * 3 && mouse_y < TILE_SIZE * ZOOM_LEVEL * 3) {
-        // Divide mouse coordinates by the tile's size to find out where the unit should be put
-        int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
-        int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
-
-        // Draw transparent unit of current player at mouse position
-        // only if match is in progress
-        gameunits.SetTransparentCell(x, y);
     }
 }

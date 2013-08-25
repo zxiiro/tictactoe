@@ -45,6 +45,7 @@ public:
     ScoreBoard();
 
     bool Initialize(SDL_Renderer* renderer);
+    void Cleanup();
     void OnRender(SDL_Renderer* renderer);
 
     void AddPointPlayer1();

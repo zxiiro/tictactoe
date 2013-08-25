@@ -74,6 +74,11 @@ bool Unit::Initialize(SDL_Renderer* renderer)
     return true;
 }
 
+void Unit::Cleanup()
+{
+    SDL_DestroyTexture(unitset);
+}
+
 void Unit::OnRender(SDL_Renderer* renderer)
 {
     if (unitset == NULL) {

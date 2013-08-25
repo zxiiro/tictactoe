@@ -40,6 +40,11 @@ bool ScoreBoard::Initialize(SDL_Renderer* renderer)
     return true;
 }
 
+void ScoreBoard::Cleanup()
+{
+    SDL_DestroyTexture(scoreboardset);
+}
+
 void ScoreBoard::OnRender(SDL_Renderer* renderer)
 {
     /**********************

@@ -41,6 +41,7 @@ public:
     Unit();
 
     bool Initialize(SDL_Renderer* renderer);
+    void Cleanup();
     void OnRender(SDL_Renderer* renderer);
     void SetCell(int x, int y);
     void SetTransparentCell(int x, int y);

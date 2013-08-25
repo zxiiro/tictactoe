@@ -40,7 +40,6 @@ class Board
 private:
     SDL_Rect*           tile_clips;
     std::vector<Tile>   tile_list;
-    Unit                gameunits;
 
 public:
     SDL_Texture*    tileset;
@@ -48,10 +47,8 @@ public:
     Board();
 
     bool Initialize(SDL_Renderer* renderer);
+    void Cleanup();
     void OnRender(SDL_Renderer* renderer);
-
-    void PlaceUnit(int mouse_x, int mouse_y);
-    void HoverUnit(int mouse_x, int mouse_y);
 };
 
 #endif

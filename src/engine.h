@@ -31,7 +31,6 @@
 #include "board.h"
 #include "global.h"
 #include "painter.h"
-#include "unit.h"
 #include "scoreboard.h"
 
 class Engine
@@ -40,6 +39,7 @@ private:
     bool            running;
     bool            match_inprogress;
     Board           gameboard;
+    Unit            gameunits;
     ScoreBoard      scoreboard;
 
     SDL_Renderer*   renderer;
@@ -55,6 +55,10 @@ private:
 
     void OnMouseLeftButtonDown(int mouse_x, int mouse_y);
     void OnMouseMove(int mouse_x, int mouse_y);
+
+    // Tic Tac Toe Logic
+    void PlaceUnit(int mouse_x, int mouse_y);
+    void HoverUnit(int mouse_x, int mouse_y);
 
 public:
     Engine();
