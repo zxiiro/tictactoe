@@ -84,7 +84,7 @@ bool Engine::Initialize()
     /*****************
         Load Units
      *****************/
-    
+
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
             "Initializing units...");
     if (gameunits.Initialize(renderer) == false)
@@ -243,10 +243,12 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[x][i].type == Unit::UNIT_TYPE_X) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                match_inprogress = false;
             }
             else if (unit_list[x][i].type == Unit::UNIT_TYPE_O) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                match_inprogress = false;
             }
         }
     }
@@ -263,10 +265,12 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[i][y].type == Unit::UNIT_TYPE_X) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                match_inprogress = false;
             }
             else if (unit_list[i][y].type == Unit::UNIT_TYPE_O) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                match_inprogress = false;
             }
         }
     }
@@ -284,10 +288,12 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
                 if (unit_list[i][i].type == Unit::UNIT_TYPE_X) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                    match_inprogress = false;
                 }
                 else if (unit_list[i][i].type == Unit::UNIT_TYPE_O) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                    match_inprogress = false;
                 }
             }
         }
@@ -305,10 +311,12 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_X) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                    match_inprogress = false;
             }
             else if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_O) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                    match_inprogress = false;
             }
         }
     }
@@ -317,6 +325,7 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
     if (move_count >= 9) {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "It's a draw!");
+        match_inprogress = false;
     }
 }
 void Engine::PlaceUnit(int mouse_x, int mouse_y)
@@ -367,7 +376,7 @@ void Engine::HoverUnit(int mouse_x, int mouse_y)
             unit_list[last_hover_x][last_hover_y].state = Unit::UNIT_STATE_NONE;
             unit_list[last_hover_x][last_hover_y].type = Unit::UNIT_TYPE_NONE;
         }
-    
+
         // Check if the cell in the unit list is NONE, otherwise it will overwrite existing units
         if (unit_list[x][y].state == Unit::UNIT_STATE_NONE) {
             if (current_player == Unit::UNIT_TYPE_X) {
@@ -378,7 +387,7 @@ void Engine::HoverUnit(int mouse_x, int mouse_y)
                 unit_list[x][y].type = Unit::UNIT_TYPE_O;
                 unit_list[x][y].state = Unit::UNIT_STATE_TRANSPARENT;
             }
-    
+
             // Finally the new last hover is now the cell we set as transparent
             last_hover_x = x;
             last_hover_y = y;
