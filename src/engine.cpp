@@ -243,11 +243,13 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[x][i].type == Unit::UNIT_TYPE_X) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                scoreboard.AddPointPlayer1();
                 match_inprogress = false;
             }
             else if (unit_list[x][i].type == Unit::UNIT_TYPE_O) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                scoreboard.AddPointPlayer2();
                 match_inprogress = false;
             }
         }
@@ -265,11 +267,13 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[i][y].type == Unit::UNIT_TYPE_X) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                scoreboard.AddPointPlayer1();
                 match_inprogress = false;
             }
             else if (unit_list[i][y].type == Unit::UNIT_TYPE_O) {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                         "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                scoreboard.AddPointPlayer2();
                 match_inprogress = false;
             }
         }
@@ -288,11 +292,13 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
                 if (unit_list[i][i].type == Unit::UNIT_TYPE_X) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                    scoreboard.AddPointPlayer1();
                     match_inprogress = false;
                 }
                 else if (unit_list[i][i].type == Unit::UNIT_TYPE_O) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                    scoreboard.AddPointPlayer2();
                     match_inprogress = false;
                 }
             }
@@ -311,11 +317,13 @@ void Engine::CheckWinner(int x, int y, Unit::Type current_unit_type)
             if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_X) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_X + 1);
+                    scoreboard.AddPointPlayer1();
                     match_inprogress = false;
             }
             else if (unit_list[i][(unit_list.size() - 1) - i].type == Unit::UNIT_TYPE_O) {
                     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                             "Player %i won!", Unit::UNIT_TYPE_O + 1);
+                    scoreboard.AddPointPlayer2();
                     match_inprogress = false;
             }
         }
