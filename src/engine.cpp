@@ -336,9 +336,6 @@ void Engine::PlaceUnit(int mouse_x, int mouse_y)
         int x = mouse_x / (TILE_SIZE * ZOOM_LEVEL);
         int y = mouse_y / (TILE_SIZE * ZOOM_LEVEL);
 
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "Player %i moves to %ix%i", current_player + 1, x, y);
-
         Unit::Type current_unit_type = Unit::UNIT_TYPE_NONE;
 
         // Check if the cell in the unit list hasn't been placed, otherwise it will overwrite existing units
@@ -356,6 +353,9 @@ void Engine::PlaceUnit(int mouse_x, int mouse_y)
                 unit_list[x][y].state = Unit::UNIT_STATE_PLACED;
                 current_player = Unit::UNIT_TYPE_X;
             }
+
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "Player %i moves to %ix%i", current_player + 1, x, y);
         }
 
         CheckWinner(x, y, current_unit_type);
