@@ -455,9 +455,9 @@ void Engine::PlaceUnit(int mouse_x, int mouse_y)
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                 "Player %i moves to %ix%i", current_player + 1, x, y);
-        }
 
-        CheckWinner(x, y, current_unit_type);
+            CheckWinner(x, y, current_unit_type);
+        }
     }
 }
 
