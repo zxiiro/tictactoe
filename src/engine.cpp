@@ -68,6 +68,13 @@ bool Engine::Initialize()
                     SDL_RENDERER_PRESENTVSYNC |
                     SDL_RENDERER_ACCELERATED);
 
+    /******************************
+        Initialize Rematch Popup
+     ******************************/
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
+        "Initializing rematch popup...");
+    rematch_popup = Painter::LoadImage(renderer, "gfx/popup.png");
 
     /*****************
         Load Board
@@ -140,6 +147,7 @@ void Engine::Cleanup()
     scoreboard.Cleanup();
 
     // Cleanup items created by Initialize()
+    SDL_DestroyTexture(rematch_popup);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -206,6 +214,12 @@ void Engine::OnRender()
     gameunits.OnRender(renderer, unit_list);
     scoreboard.OnRender(renderer);
 
+    // Display rematch button if match is not in progress
+    if (!match_inprogress) {
+        SDL_Log("Test");
+        DrawRematchPopup();
+    }
+
     SDL_RenderPresent(renderer);
 }
 
@@ -230,6 +244,17 @@ void Engine::OnMouseMove(int mouse_x, int mouse_y) {
 /***********************
     Tic Tac Toe Logic
  ***********************/
+
+void Engine::DrawRematchPopup()
+{
+    SDL_Rect pos;
+    pos.x = (WWIDTH - 96 * ZOOM_LEVEL) / 2;
+    pos.y = (WHEIGHT - 64 * ZOOM_LEVEL) / 2;
+    pos.w = 96 * ZOOM_LEVEL;
+    pos.h = 64 * ZOOM_LEVEL;
+
+    Painter::DrawImage(renderer, rematch_popup, &pos, NULL);
+}
 
 void Engine::OnWin()
 {

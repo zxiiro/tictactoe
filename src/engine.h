@@ -44,6 +44,7 @@ private:
 
     SDL_Renderer*   renderer;
     SDL_Window*     window;
+    SDL_Texture*    rematch_popup;
 
     int             last_hover_x;
     int             last_hover_y;
@@ -64,6 +65,7 @@ private:
     void OnMouseMove(int mouse_x, int mouse_y);
 
     // Tic Tac Toe Logic
+    void DrawRematchPopup();
     void CheckWinner(int x, int y, Unit::Type current_unit_type);
     void PlaceUnit(int mouse_x, int mouse_y);
     void HoverUnit(int mouse_x, int mouse_y);
