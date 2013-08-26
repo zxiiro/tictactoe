@@ -19,25 +19,30 @@
 
 **********************************************************************/
 
-#ifndef _CPAINTER_H_
-#define _CPAINTER_H_
+#ifndef LOADSHADER_H
+#define LOADSHADER_H
+
+#include <vector>
+#include <string>
+#include <fstream>
+#include <algorithm>
 
 #ifdef ANDROID
-    #include <SDL.h>
-    #include <SDL_image.h>
     #include <SDL_opengl.h>
 #else
-    #include <SDL2/SDL.h>
-    #include <SDL2/SDL_image.h>
     #include <SDL2/SDL_opengl.h>
 #endif
 
-class Painter {
-public:
-    Painter();
+class Program {
+    public:
+        static GLuint Load(
+                const char *vertex_file_path,
+                const char *fragment_file_path,
+                const char *geometry_file_path);
 
-    // Tools for painting to the renderer
-    static GLuint LoadImage(const char* file);
+    private:
+        static void CheckStatus(GLuint obj);
+        static void AttachShader(GLuint program, GLenum type, const char *src);
 };
 
 #endif

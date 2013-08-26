@@ -85,9 +85,20 @@ if (NOT Boost_FOUND)
     message (FATAL_ERROR "Boost not found!")
 endif (NOT Boost_FOUND)
 
+###
+### Find OpenGL
+###
+find_package(OpenGL REQUIRED)
+if (NOT OPENGL_FOUND)
+    message (FATAL_ERROR "OpenGL not found!")
+endif(NOT OPENGL_FOUND)
+
+add_definitions(-DGL_GLEXT_PROTOTYPES)
+
 include_directories(
     ${Boost_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIRS}
     ${INCLUDE_DIRECTORIES}
     )
 
@@ -96,9 +107,12 @@ target_link_libraries(${App_Name}
     ${SDL2_LIBRARY}
     ${SDL2MAIN_LIBRARY}
     ${SDL2IMAGE_LIBRARY}
+    ${OPENGL_LIBRARIES}
     ${TARGET_LINK_LIBRARIES}
     )
 
 ## Copy graphics to output
 file(COPY "${CMAKE_SOURCE_DIR}/gfx" DESTINATION "${CMAKE_BINARY_DIR}"
             PATTERN "gfx/*.xcf" EXCLUDE)
+
+file(COPY "${CMAKE_SOURCE_DIR}/shaders" DESTINATION "${CMAKE_BINARY_DIR}")

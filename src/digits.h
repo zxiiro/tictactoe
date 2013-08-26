@@ -22,24 +22,43 @@
 #ifndef _CDIGITS_H_
 #define _CDIGITS_H_
 
+#include <vector>
+
 #ifdef ANDROID
-#include <SDL.h>
+    #include <SDL.h>
+    #include <SDL_opengl.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_opengl.h>
 #endif
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "painter.h"
 
 class Digits
 {
 public:
-    SDL_Texture*    digits;
-    SDL_Rect*       digits_clips;
-
     Digits();
 
-    bool Initialize(SDL_Renderer* renderer);
+    bool Initialize(GLuint program);
     void Cleanup();
+    void OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 view_matrix, float x, float y, int id);
+
+private:
+    GLuint texture;
+
+    GLuint index_buffer;
+    GLuint vertex_buffer;
+    GLuint uv_buffer;
+
+    glm::mat4 model_matrix;
+    GLuint mvp_uniform;
+    GLuint texture_sampler_uniform;
+    GLuint alpha_color_uniform;
+
+    std::vector< std::vector<GLfloat> > uvs;
 };
 
 #endif

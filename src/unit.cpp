@@ -23,72 +23,176 @@
 
 Unit::Unit()
 {
-    unitset = NULL;
-    unit_clips = new SDL_Rect[2];
-
+    unitset = 0;
     type = UNIT_TYPE_NONE;
     state = UNIT_STATE_NONE;
 }
 
-bool Unit::Initialize(SDL_Renderer* renderer)
+const unsigned int indices[] = {
+    0, 1, 2,
+    2, 3, 0
+};
+
+const GLfloat vertices[] = {
+    0, 0, 0,      // Top left
+    32, 0, 0,     // Top right
+    32, 32, 0,    // Bottom right
+    0, 32, 0      // Bottom left
+};
+
+/**
+ * Initializes units (X and O)
+ *
+ * @param program requires a program object that contains all of the shaders
+ *
+ * @return returns true or false, whether or not it successfully initialized
+ */
+bool Unit::Initialize(GLuint program)
 {
     /***************************
         Load unitset & clips
      ***************************/
-    unitset = Painter::LoadImage(renderer, "gfx/units.png");
-    if (unitset == NULL) return false;
+    unitset = Painter::LoadImage("gfx/units.png");
+    if (unitset == 0) return false;
 
-    for (int i = 0; i < 2; i++) {
-        unit_clips[i].x = i * 32;
-        unit_clips[i].y = 0;
-        unit_clips[i].w = 32;
-        unit_clips[i].h = 32;
+    /********************************
+      Initialize Texture Coordinates
+     ********************************/
+    int texture_width = 64;
+    int texture_height = 32;
+    int width = 32;
+    int height = 32;
+
+    uvs.clear();
+    // OpenGL uses a column-major order instead of row-major order
+    for (int x = 0; x < 2; x++) {
+        std::vector<GLfloat> tmp_uvs;
+
+        for (int y = 0; y < 1; y++) {
+            // Top left
+            tmp_uvs.push_back(x * width / (float)texture_width);
+            tmp_uvs.push_back(y / (float)texture_height);
+
+            // Top right
+            tmp_uvs.push_back((x * width + width) / (float)texture_width);
+            tmp_uvs.push_back(y / (float)texture_height);
+
+            // Bottom right
+            tmp_uvs.push_back((x * width + width) / (float)texture_width);
+            tmp_uvs.push_back((y + height) / (float)texture_height);
+
+            // Bottom left
+            tmp_uvs.push_back(x * width / (float)texture_width);
+            tmp_uvs.push_back((y + height) / (float)texture_height);
+        }
+
+        uvs.push_back(tmp_uvs);
     }
+
+    /*******************************
+          Create buffer objects
+     ******************************/
+    glGenBuffers(1, &index_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &uv_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+    glBufferData(GL_ARRAY_BUFFER, uvs[0].size() * sizeof(GLfloat), &uvs[0].front(), GL_STREAM_DRAW);
+
+    /*****************************************
+       Get uniform location from the shaders
+     *****************************************/
+    mvp_uniform = glGetUniformLocation(program, "mvp");
+    texture_sampler_uniform = glGetUniformLocation(program, "textureSampler");
+    alpha_color_uniform = glGetUniformLocation(program, "alphaColor");
+
+    // Create identity matrix
+    model_matrix = glm::mat4(1.0f);
 
     return true;
 }
 
 void Unit::Cleanup()
 {
-    SDL_DestroyTexture(unitset);
+    glDeleteBuffers(1, &index_buffer);
+    glDeleteBuffers(1, &vertex_buffer);
+    glDeleteBuffers(1, &uv_buffer);
+    glDeleteTextures(1, &unitset);
 }
 
 /**
  * Unit's OnRender function, called every frame
  *
- * @param renderer Renderer to draw on
  * @param unit_list A list of units, which is a multi-dimensional array.
+ * @param program requires a program object that contains all of the shaders
+ * @param projection_matrix requires an orthographic projection matrix
+ * @param view_matrix requires a view matrix, created by glm::lookAt
  *
  */
-void Unit::OnRender(SDL_Renderer* renderer, std::vector< std::vector<Unit> > &unit_list)
+void Unit::OnRender(
+        std::vector< std::vector<Unit> > &unit_list,
+        GLuint program,
+        glm::mat4 projection_matrix,
+        glm::mat4 view_matrix)
 {
-    if (unitset == NULL) {
+    if (unitset == 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "No unitset loaded.");
         return;
     }
 
+    glUseProgram(program);
+
     // Draw units (X and O)
     for (unsigned int y = 0; y < unit_list.size(); y++) {
         for (unsigned int x = 0; x < unit_list[y].size(); x++) {
-            SDL_Rect unit_pos;
-            unit_pos.x = x * TILE_SIZE * ZOOM_LEVEL;
-            unit_pos.y = y * TILE_SIZE * ZOOM_LEVEL;
-            unit_pos.w = TILE_SIZE * ZOOM_LEVEL;
-            unit_pos.h = TILE_SIZE * ZOOM_LEVEL;
+            model_matrix = glm::scale((float)ZOOM_LEVEL, (float)ZOOM_LEVEL, 0.0f);
+            model_matrix *= glm::translate((float)x * TILE_SIZE, (float)y * TILE_SIZE, 0.0f);
 
+            glm::mat4 mvp = projection_matrix * view_matrix * model_matrix;
+            // Pass on model_view_projection matrix to shader
+            glUniformMatrix4fv(mvp_uniform, 1, GL_FALSE, glm::value_ptr(mvp));
+
+            // Use tileset texture
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, unitset);
+            glUniform1i(texture_sampler_uniform, 0);
+
+            // Pass on vertices to shader
+            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+            // Pass on texture coordinates to shader
+            int clip_id = unit_list[x][y].type;
+            glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, uvs[clip_id].size() * sizeof(GLfloat), &uvs[clip_id].front());
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+            
             if (unit_list[x][y].state == UNIT_STATE_PLACED) {
-                SDL_SetTextureAlphaMod(unitset, 255);
+                // Pass on alpha color to shader
+                glUniform4f(alpha_color_uniform, 1.0f, 1.0f, 1.0f, 1.0f);
 
-                int unit_clip_id = unit_list[x][y].type;
-                Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
-            }
-            else if (unit_list[x][y].state == UNIT_STATE_TRANSPARENT) {
-                SDL_SetTextureAlphaMod(unitset, 100);
+                // Finally draw the vertices
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+            } else if (unit_list[x][y].state == UNIT_STATE_TRANSPARENT) {
+                // Pass on alpha color to shader
+                glUniform4f(alpha_color_uniform, 1.0f, 1.0f, 1.0f, 0.4f);
 
-                int unit_clip_id = unit_list[x][y].type;
-                Painter::DrawImage(renderer, unitset, &unit_pos, &unit_clips[unit_clip_id]);
+                // Finally draw the vertices
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
             }
+            
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
         }
     }
 }

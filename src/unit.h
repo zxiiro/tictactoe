@@ -25,10 +25,15 @@
 #include <vector>
 
 #ifdef ANDROID
-#include <SDL.h>
+    #include <SDL.h>
+    #include <SDL_opengl.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_opengl.h>
 #endif
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "global.h"
 #include "painter.h"
@@ -36,8 +41,6 @@
 class Unit
 {
 public:
-    SDL_Texture* unitset;
-
     enum State {
         UNIT_STATE_PLACED,
         UNIT_STATE_TRANSPARENT,
@@ -55,12 +58,27 @@ public:
 
     Unit();
 
-    bool Initialize(SDL_Renderer* renderer);
+    bool Initialize(GLuint program);
     void Cleanup();
-    void OnRender(SDL_Renderer* renderer, std::vector< std::vector<Unit> > &unit_list);
+    void OnRender(
+            std::vector< std::vector<Unit> > &unit_list,
+            GLuint program,
+            glm::mat4 projection_matrix,
+            glm::mat4 view_matrix);
 
 private:
-    SDL_Rect* unit_clips;
+    GLuint unitset;
+
+    GLuint index_buffer;
+    GLuint vertex_buffer;
+    GLuint uv_buffer;
+
+    glm::mat4 model_matrix;
+    GLuint mvp_uniform;
+    GLuint texture_sampler_uniform;
+    GLuint alpha_color_uniform;
+
+    std::vector< std::vector<GLfloat> > uvs;
 };
 
 #endif

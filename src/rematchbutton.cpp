@@ -19,9 +19,9 @@
 
 **********************************************************************/
 
-#include "scoreboard.h"
+#include "rematchbutton.h"
 
-Digits::Digits()
+RematchButton::RematchButton()
 {
     texture = 0;
 }
@@ -32,60 +32,33 @@ const unsigned int indices[] = {
 };
 
 const GLfloat vertices[] = {
-    0, 0, 0,     // Top left
-    6, 0, 0,     // Top right
-    6, 9, 0,     // Bottom right
-    0, 9, 0      // Bottom left
+    0, 0, 0,      // Top left
+    96, 0, 0,     // Top right
+    96, 64, 0,    // Bottom right
+    0, 64, 0      // Bottom left
+};
+
+const GLfloat uvs[] = {
+    0, 0,         // Top left
+    1, 0,         // Top right
+    1, 1,         // Bottom right
+    0, 1          // Bottom left
 };
 
 /**
- * Initializes the digits
+ * Initializes rematch pop up button
  *
- * @param program  requires a program object that contains all of the shaders
+ * @param program requires a program object that contains all of the shaders
  *
- * @return returns true or flase, whether or not it successfully initialized
+ * @return returns true or false, whether or not it successfully initialized
  */
-bool Digits::Initialize(GLuint program)
+bool RematchButton::Initialize(GLuint program)
 {
-    texture = Painter::LoadImage("gfx/numbers.png");
-    if (texture == 0) {
-        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
-            "Failed to load digits.");
-        return false;
-    }
-
-    /********************************
-      Initialize Texture Coordinates
-     ********************************/
-    int texture_width = 60;
-    int texture_height = 9;
-    int width = 6;
-    int height = 9;
-
-    uvs.clear();
-    for (int x = 0; x < 10; x++) {
-        std::vector<GLfloat> tmp_uvs;
-
-        for (int y = 0; y < 1; y++) {
-            // Top left
-            tmp_uvs.push_back(x * width / (float)texture_width);
-            tmp_uvs.push_back(y / (float)texture_height);
-
-            // Top right
-            tmp_uvs.push_back((x * width + width) / (float)texture_width);
-            tmp_uvs.push_back(y / (float)texture_height);
-
-            // Bottom right
-            tmp_uvs.push_back((x * width + width) / (float)texture_width);
-            tmp_uvs.push_back((y + height) / (float)texture_height);
-
-            // Bottom left
-            tmp_uvs.push_back(x * width / (float)texture_width);
-            tmp_uvs.push_back((y + height) / (float)texture_height);
-        }
-
-        uvs.push_back(tmp_uvs);
-    }
+    /***************************
+        Load tileset & clips
+     ***************************/
+    texture = Painter::LoadImage("gfx/popup.png");
+    if (texture == 0) return false;
 
     /*******************************
           Create buffer objects
@@ -100,7 +73,7 @@ bool Digits::Initialize(GLuint program)
 
     glGenBuffers(1, &uv_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-    glBufferData(GL_ARRAY_BUFFER, uvs[0].size() * sizeof(GLfloat), &uvs[0].front(), GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
 
     /*****************************************
        Get uniform location from the shaders
@@ -115,7 +88,7 @@ bool Digits::Initialize(GLuint program)
     return true;
 }
 
-void Digits::Cleanup()
+void RematchButton::Cleanup()
 {
     glDeleteBuffers(1, &index_buffer);
     glDeleteBuffers(1, &vertex_buffer);
@@ -124,28 +97,29 @@ void Digits::Cleanup()
 }
 
 /**
- * Renders a digit at a given x and y, with the id
+ * Render the rematch popup button
  *
  * @param program requires a program object that contains all of the shaders
- * @param projection_matrix requires an orthorgraphic projection matrix
+ * @param projection_matrix requires an orthographic projection matrix
  * @param view_matrix requires a view matrix, created by glm::lookAt
- * @param x the horizontal coordinate of where you want to draw the digit
- * @param y the vertical coordinate of where you want to draw teh digit
- * @param id the number/id of what you want to draw, ranges from 0 to 9
  *
  */
-void Digits::OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 view_matrix, float x, float y, int id)
+void RematchButton::OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 view_matrix)
 {
     if (texture == 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                "No digit texture loaded.");
+            "No tileset loaded.");
         return;
     }
 
     glUseProgram(program);
+
+    float x = (WWIDTH - (96 * ZOOM_LEVEL)) / (2 * ZOOM_LEVEL);
+    float y = (WHEIGHT - (64 * ZOOM_LEVEL)) / (2 * ZOOM_LEVEL);
+
     model_matrix = glm::scale((float)ZOOM_LEVEL, (float)ZOOM_LEVEL, 0.0f);
     model_matrix *= glm::translate(x, y, 0.0f);
-
+    
     glm::mat4 mvp = projection_matrix * view_matrix * model_matrix;
     // Pass on model_view_projection matrix to shader
     glUniformMatrix4fv(mvp_uniform, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -153,7 +127,7 @@ void Digits::OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 vie
     // Pass on alpha color to shader
     glUniform4f(alpha_color_uniform, 1.0f, 1.0f, 1.0f, 1.0f);
 
-    // Use digit texture
+    // Use texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(texture_sampler_uniform, 0);
@@ -165,7 +139,6 @@ void Digits::OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 vie
 
     // Pass on texture coordinates to shader
     glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, uvs[id].size() * sizeof(GLfloat), &uvs[id].front());
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
@@ -175,4 +148,28 @@ void Digits::OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 vie
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+}
+
+/*
+ * Initiates a rematch if the user clicks rematch button.
+ *
+ * @param mouse_x the position of the mouse in x coordinates, relative to the window.
+ * @param mouse_y the position of the mouse in y coordinates, relative to the window.
+ *
+ * @return a boolean will be returned whether or not the rematch button has actually been clicked
+ */
+bool RematchButton::RematchClicked(int mouse_x, int mouse_y)
+{
+    int popup_pos_x = (WWIDTH - 96 * ZOOM_LEVEL) / 2;
+    int popup_pos_y = (WHEIGHT - 64 * ZOOM_LEVEL) / 2;
+
+    if ((mouse_x > popup_pos_x) &&
+        (mouse_x < popup_pos_x + 96 * ZOOM_LEVEL) &&
+        (mouse_y > popup_pos_y) &&
+        (mouse_y < popup_pos_y + 64 * ZOOM_LEVEL))
+    {
+        return true;
+    }
+
+    return false;
 }

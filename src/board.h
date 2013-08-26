@@ -25,30 +25,43 @@
 #include <vector>
 
 #ifdef ANDROID
-#include <SDL.h>
+    #include <SDL.h>
+    #include <SDL_opengl.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_opengl.h>
 #endif
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "global.h"
 #include "painter.h"
 #include "tile.h"
-#include "unit.h"
 
 class Board
 {
-private:
-    SDL_Rect*           tile_clips;
-    std::vector<Tile>   tile_list;
-
 public:
-    SDL_Texture*    tileset;
-
     Board();
 
-    bool Initialize(SDL_Renderer* renderer);
+    bool Initialize(GLuint program);
     void Cleanup();
-    void OnRender(SDL_Renderer* renderer);
+    void OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 view_matrix);
+
+private:
+    GLuint tileset;
+
+    GLuint index_buffer;
+    GLuint vertex_buffer;
+    GLuint uv_buffer;
+
+    glm::mat4 model_matrix;
+    GLuint mvp_uniform;
+    GLuint texture_sampler_uniform;
+    GLuint alpha_color_uniform;
+
+    std::vector<Tile>   tile_list;
+    std::vector< std::vector<GLfloat> > uvs;
 };
 
 #endif

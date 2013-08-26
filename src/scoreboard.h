@@ -25,9 +25,11 @@
 #include <queue>
 
 #ifdef ANDROID
-#include <SDL.h>
+    #include <SDL.h>
+    #include <SDL_opengl.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_opengl.h>
 #endif
 
 #include "digits.h"
@@ -37,21 +39,31 @@
 class ScoreBoard
 {
 public:
-    SDL_Texture*         scoreboardset;
-    Digits               digits;
-    int                  player1_score;
-    int                  player2_score;
-
     ScoreBoard();
 
-    bool Initialize(SDL_Renderer* renderer);
+    bool Initialize(GLuint program);
     void Cleanup();
-    void OnRender(SDL_Renderer* renderer);
+    void OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 view_matrix);
 
     void AddPointPlayer1();
     void AddPointPlayer2();
 
 private:
+    GLuint               scoreboardset;
+
+    GLuint               index_buffer;
+    GLuint               vertex_buffer;
+    GLuint               uv_buffer;
+
+    glm::mat4            model_matrix;
+    GLuint               mvp_uniform;
+    GLuint               texture_sampler_uniform;
+    GLuint               alpha_color_uniform;
+
+    Digits               digits;
+    int                  player1_score;
+    int                  player2_score;
+
     // Offsets for where to draw each player's scoreboard
     static const int    PLAYER1_X_OFFSET = 7;
     static const int    PLAYER1_Y_OFFSET = 34;

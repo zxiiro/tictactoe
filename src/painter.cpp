@@ -24,15 +24,15 @@
 /**
  * Loads an image into memory
  *
- * @param renderer  renderer to use
  * @param file      filename of image to load
  *
- * @return          returns the loaded image
+ * @return          returns the loaded image as a GLuint texture
  */
-SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, const char* file)
+GLuint Painter::LoadImage(const char* file)
 {
     SDL_Surface* tmp_image = NULL;
-    SDL_Texture* image = NULL;
+    GLenum texture_format = 0;
+    GLint number_of_colors = 0;
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
             "Loading image... %s", file);
@@ -40,36 +40,55 @@ SDL_Texture* Painter::LoadImage(SDL_Renderer* renderer, const char* file)
     if (tmp_image == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
             "Failed to load image: %s", file);
-        return NULL;
+        return 0;
     }
 
-    image = SDL_CreateTextureFromSurface(renderer, tmp_image);
+    number_of_colors = tmp_image->format->BytesPerPixel;
+    
+    // Determine texture format
+    if (number_of_colors == 4) {
+        if (tmp_image->format->Rmask == 0x000000ff)
+            texture_format = GL_RGBA;
+        else
+            texture_format = GL_BGRA;
+    } else if (number_of_colors == 3) {
+        if (tmp_image->format->Rmask == 0x000000ff)
+            texture_format = GL_RGB;
+        else
+            texture_format = GL_BGR;
+    } else {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "Failed to determine texture format from: %s", file);
+    }
+
+    // Create texture
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Set texture's stretching and shrinking properties
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Load image into data that opengl can read and process
+    glTexImage2D(GL_TEXTURE_2D,     // Target
+            0,                      // Levels
+            number_of_colors,       // Internal Format
+            tmp_image->w,           // Width
+            tmp_image->h,           // Height
+            0,                      // Border
+            texture_format,         // Texture Format
+            GL_UNSIGNED_BYTE,       // Type
+            tmp_image->pixels);     // Image Data
+
     //Free the temporary image
     SDL_FreeSurface(tmp_image);
 
-    return image;
-}
-
-/**
- * Draws an image to the renderer
- *
- * @param renderer  renderer to draw on
- * @param image     image to draw
- * @param position  position and size to draw image at (SDL_Rect)
- *                      pass 0 for width and height if you would like
- *                      DrawImage to calculate the width and height
- *                      based on image size.
- * @param clip      clip to draw if available, passing NULL disables clip
- *
- * @return          true if success, otherwise false on failure
- */
-bool Painter::DrawImage(SDL_Renderer* renderer, SDL_Texture* image, SDL_Rect* position, SDL_Rect* clip)
-{
-    if ((clip == NULL) && (position->w == 0) && (position->h == 0)) {
-        SDL_QueryTexture(image, NULL, NULL, &position->w, &position->h);
+    if (textureID == 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                "Failed to convert SDL_Surface to GLuint from: %s", file);
+        return 0;
     }
 
-    SDL_RenderCopy(renderer, image, clip, position);
-
-    return true;
+    return textureID;
 }

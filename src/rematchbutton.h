@@ -19,25 +19,46 @@
 
 **********************************************************************/
 
-#ifndef _CPAINTER_H_
-#define _CPAINTER_H_
+#ifndef _CREMATCH_H_
+#define _CREMATCH_H_
+
+#include <vector>
 
 #ifdef ANDROID
     #include <SDL.h>
-    #include <SDL_image.h>
     #include <SDL_opengl.h>
 #else
     #include <SDL2/SDL.h>
-    #include <SDL2/SDL_image.h>
     #include <SDL2/SDL_opengl.h>
 #endif
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-class Painter {
+#include "global.h"
+#include "painter.h"
+
+class RematchButton
+{
 public:
-    Painter();
+    RematchButton();
+    bool RematchClicked(int mouse_x, int mouse_y);
 
-    // Tools for painting to the renderer
-    static GLuint LoadImage(const char* file);
+    bool Initialize(GLuint program);
+    void Cleanup();
+    void OnRender(GLuint program, glm::mat4 projection_matrix, glm::mat4 view_matrix);
+
+private:
+    GLuint texture;
+
+    GLuint index_buffer;
+    GLuint vertex_buffer;
+    GLuint uv_buffer;
+
+    glm::mat4 model_matrix;
+    GLuint mvp_uniform;
+    GLuint texture_sampler_uniform;
+    GLuint alpha_color_uniform;
 };
 
 #endif
