@@ -48,8 +48,8 @@ if(WIN32)
         ${HDRS}
         )
 
-        SET_TARGET_PROPERTIES(${App_Name} PROPERTIES COMPILE_FLAGS "/Od /ZI")
-        SET_TARGET_PROPERTIES(${App_Name} PROPERTIES LINK_FLAGS "/DEBUG")
+        SET_TARGET_PROPERTIES(${App_Name} PROPERTIES COMPILE_FLAGS "")
+        SET_TARGET_PROPERTIES(${App_Name} PROPERTIES LINK_FLAGS "-lmingw32 -mwindows")
 
 else ()
         add_executable (${App_Name}
