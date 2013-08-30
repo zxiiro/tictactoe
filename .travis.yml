@@ -2,7 +2,8 @@ language: cpp
 compiler:
   - gcc
 before_install:
-  - echo "yes" | sudo apt-add-repository ppa:zoogie/sdl2-snapshots
+  - deb http://ppa.launchpad.net/zoogie/sdl2-snapshots/ubuntu precise main 
+  - deb-src http://ppa.launchpad.net/zoogie/sdl2-snapshots/ubuntu precise main
   - sudo apt-get install cmake
   - sudo apt-get install libsdl2 libsdl2-image
 before_script:
