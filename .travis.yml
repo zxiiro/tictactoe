@@ -2,7 +2,9 @@ language: cpp
 compiler:
   - gcc
 before_install:
+  - sudo apt-add-repository ppa:zoogie/sdl2-snapshots
   - sudo apt-get install cmake
+  - sudo apt-get install libsdl2 libsdl2-image
 before_script:
   - mkdir build
   - cd build
